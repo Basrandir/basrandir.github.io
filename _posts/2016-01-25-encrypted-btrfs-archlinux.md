@@ -1,7 +1,7 @@
 ---
 layout: post
 title: How-To &#58; Encrypted Btrfs install on Arch Linux
-category: how-to
+category: guide
 tags: how-to, btrfs, luks, archlinux
 ---
 Setting up a Btrfs install while juggling encyption, UEFI, and swap can be tricky so I've decided to put down my method here. Btrfs is very flexible and can do a lot of things from replacing the MBR/GPT schemes to RAID and then some. Unfortunately it does have some limitations. It doesn't have built-in encyption, doesn't support swap files and -not its fault- can't use UEFI to boot. Encryption can be solved using dm-crypt and the other issues by having their own partitions.

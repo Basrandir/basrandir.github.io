@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Starting up with Jekyll and Github
-category: musings
+category: blog
 tags: web, jekyll, github
 ---
 I've decided to actually create a website in order to document my learning as well as interesting information or methodology I stumble across. Essentially a way for me to keep track of certain details that I might need to refer back to. Maybe it'll be helpful for others too.
