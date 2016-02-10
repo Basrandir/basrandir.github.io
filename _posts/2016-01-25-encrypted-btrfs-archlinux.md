@@ -47,7 +47,7 @@ Next unlock the encrypted container and enter the password:
 
     cryptsetup open /dev/sda3 btrfsroot
 
-Replace btrfsroot with any preferred name. This will map the LUKS container to /dev/mapper/btrfsroot.
+Replace `btrfsroot` with any preferred name. This will map the LUKS container to `/dev/mapper/btrfsroot`.
 
 Create the btrfs filesystem:
 
