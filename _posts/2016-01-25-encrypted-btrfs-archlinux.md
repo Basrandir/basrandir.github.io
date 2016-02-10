@@ -111,6 +111,7 @@ The btrfs-progs package is required in order to manipulate the btrfs install.
 
 ## Post Installation
 Generate the fstab file:
+
     genfstab -U /mnt > /mnt/etc/fstab
 
 genftab doesn't handle btrfs subvolumes very gracefully so edit the file. The subvolume mounting should look something like this:
