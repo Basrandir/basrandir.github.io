@@ -78,7 +78,7 @@ Now create the subvolumes. In Btrfs these essentially replace (or complement) th
     btrfs subvolume create __arch/home
     btrfs subvolume create __snapshots
 
-There is one subvolume for the root(/) directory and one for the home(/home) directory. The `__snapshots` subvolume is where the snapshots of the subvolumes will be stored. Snapshots can be created of the `root` or `home` subvolumes (or both by snapshotting `__arch`) prior to major upgrades as a form of backup. They can also be automated via simple scripts.
+There is one subvolume for the root(`/`) directory and one for the home(`/home`) directory. The `__snapshots` subvolume is where the snapshots of the subvolumes will be stored. Snapshots can be created of the `root` or `home` subvolumes (or both by snapshotting `__arch`) prior to major upgrades as a form of backup. They can also be automated via simple scripts.
 
 View the subvolumes:
 
@@ -126,7 +126,7 @@ Chroot into the install:
 
     arch-chroot /mnt /bin/bash
 
-Edit the /etc/mkinitcpio.conf file to include the encrypt HOOK before the filesystems hook:
+Edit the `/etc/mkinitcpio.conf` file to include the `encrypt` HOOK before the filesystems hook:
 
     HOOKS="... encrypt ... filesystems ..."
 
@@ -138,9 +138,9 @@ Install the systemd-boot bootloader:
 
     bootctl install
 
-This will by default install the bootloader in /boot.
+This will by default install the bootloader in `/boot`.
 
-Create a file in `/boot/loader/entires` called `arch.conf`. Determine the unique UUID of the encrypted partition (/dev/sda3) and of the btrfs LUKS container (/dev/mapper/btrfsroot)..
+Create a file in `/boot/loader/entires` called `arch.conf`. Determine the unique UUID of the encrypted partition (`/dev/sda3`) and of the btrfs LUKS container (`/dev/mapper/btrfsroot`)..
 
     title   Arch Linux
     linux   /vmlinuz-linux
