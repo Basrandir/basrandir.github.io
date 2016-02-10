@@ -94,7 +94,7 @@ Decide where to mount the subvolumes and create the appropriate directories.
     mount -o subvol=__arch/root /dev/mapper/btrfsroot /mnt
     mkdir /mnt/{home,.snapshots}
     mount -o subvol=__arch/home /dev/mapper/btrfsroot /mnt/home
-    mount -o subvol=__snapshots /dev/mapper/btrfsroot /.snapshots
+    mount -o subvol=__snapshots /dev/mapper/btrfsroot /mnt/.snapshots
 
 This mounts the corresponding subvolumes of the btrfsroot Btrfs filesystem to their appropriate locations.
 
