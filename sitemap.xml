@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>http://bassamsaeed.ca/post/lxc-container-networking/</loc>
+    <lastmod>2016-05-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://bassamsaeed.ca/post/encrypted-btrfs-archlinux/</loc>
+    <lastmod>2016-01-25T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://bassamsaeed.ca/post/starting-up/</loc>
+    <lastmod>2015-10-26T16:33:42+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://bassamsaeed.ca/</loc>
+    <lastmod>2016-05-14T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://bassamsaeed.ca/post/</loc>
+    <lastmod>2016-05-14T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+</urlset>

@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Bassam Saeed</title>
+    <link>http://bassamsaeed.ca/index.xml</link>
+    <description>Recent content on Bassam Saeed</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 14 May 2016 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://bassamsaeed.ca/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Setting up LXC with Networking</title>
+      <link>http://bassamsaeed.ca/post/lxc-container-networking/</link>
+      <pubDate>Sat, 14 May 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://bassamsaeed.ca/post/lxc-container-networking/</guid>
+      <description>&lt;p&gt;From my understaning Ubuntu will setup a bridge by default when you install lxc. Or perhaps when you first create a container. I&amp;rsquo;m not certain. This isn&amp;rsquo;t the case in a lot of other distributions however.&lt;/p&gt;
+
+&lt;p&gt;In this guide we&amp;rsquo;ll setup a network bridge. The bridge with be setup on the host system to aggregate the internal container networks with the outer network. In this way the host system will become a bridge from the router to the containers.&lt;/p&gt;
+
+&lt;p&gt;First create the virtual link and bring it up.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ip link add name *bridge_name* type bridge
+ip link set *bridge_name* up
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Add an interface (presumably the LAN interface) to the bridge.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ip link set *interface* master *bridge_name*
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Get an IP address for the bridge.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;dhcpcd *bridge_name*
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Confirm that the host has a proper connection.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ping -c 1 www.bassamsaeed.ca
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If everything is working then the bridge is working perfectly. The next step is to properly set up the containers to use the bridge.&lt;/p&gt;
+
+&lt;p&gt;First create the container. Use any preferred template.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;lxc-create -n *lxc_name* -t debian
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Edit the config file of the container. This is usually located at &lt;code&gt;/var/lib/lxc/*lxc_name*/config&lt;/code&gt;. Add the following two lines:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;## network
+lxc.network.type = veth
+lxc.network.link = *bridge_name*
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This will create an virtual ethernet interface and link it with the bridge.&lt;/p&gt;
+
+&lt;p&gt;The guest container is now bridged with the network. DHCP may be configured in the guest container. Static IP may also be configured in the actual container or in the container config file as follows:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;lxc.network.ipv4 = 192.168.1.100/24
+lxc.network.ipv4.gateway = 192.168.1.1
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How-To: Encrypted Btrfs install on Arch Linux</title>
+      <link>http://bassamsaeed.ca/post/encrypted-btrfs-archlinux/</link>
+      <pubDate>Mon, 25 Jan 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://bassamsaeed.ca/post/encrypted-btrfs-archlinux/</guid>
+      <description>
+
+&lt;p&gt;Setting up a Btrfs install while juggling encyption, UEFI, and swap can be tricky so I&amp;rsquo;ve decided to put down my method here. Btrfs is very flexible and can do a lot of things from replacing the MBR/GPT schemes to RAID and then some. Unfortunately it does have some limitations. It doesn&amp;rsquo;t have built-in encyption, doesn&amp;rsquo;t support swap files and -not its fault- can&amp;rsquo;t use UEFI to boot. Encryption can be solved using dm-crypt and the other issues by having their own partitions.&lt;/p&gt;
+
+&lt;h2 id=&#34;partitioning&#34;&gt;Partitioning&lt;/h2&gt;
+
+&lt;p&gt;To begin with decide how exactly the install will be set up. If UEFI boot isn&amp;rsquo;t needed then there is no need for a separate EFI System Partition.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Skip this and the &lt;em&gt;Formatting&lt;/em&gt; step if neither UEFI or swap is required.&lt;/p&gt;
+
+&lt;p&gt;For this example, create 3 partitions:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;A small EFI System Partition for UEFI boot. &lt;em&gt;~ 512M&lt;/em&gt;&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;Swap partition for hibernation. &lt;em&gt;~ Size of RAM&lt;/em&gt;&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;A final partition that will be the encrypted Btrfs Arch Linux install. &lt;em&gt;Rest of the drive.&lt;/em&gt;&lt;br /&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;When done it should look something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sda
+ ├─ sda1     EFI     512 MB
+ ├─ sda2     swap    2 GB
+ └─ sda3             114 GB
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Set the EFI partition as bootable using whatever method you used to create the partitions.&lt;/p&gt;
+
+&lt;h2 id=&#34;formatting&#34;&gt;Formatting&lt;/h2&gt;
+
+&lt;p&gt;Format the EFI and swap partitions correctly.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkfs.fat -F32 /dev/sda1
+mkswap /dev/sda2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And activate swap:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;swapon /dev/sda2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;encyption&#34;&gt;Encyption&lt;/h2&gt;
+
+&lt;p&gt;The first thing that needs to be done is to create a LUKS encrypted container in the final partition using dm-crypt.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cryptsetup -vy luksFormat /dev/sda3
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The -y option is required to verify the password. Make sure it&amp;rsquo;s a secure password and don&amp;rsquo;t forget it. It will be required at the start of every boot..&lt;/p&gt;
+
+&lt;p&gt;Next unlock the encrypted container and enter the password:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cryptsetup open /dev/sda3 btrfsroot
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Replace &lt;code&gt;btrfsroot&lt;/code&gt; with any preferred name. This will map the LUKS container to &lt;code&gt;/dev/mapper/btrfsroot&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Create the btrfs filesystem:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkfs.btrfs -L &amp;quot;arch&amp;quot; /dev/mapper/btrfsroot
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;arch&lt;/code&gt; label will be used to mount the various Btrfs subvolumes in fstab. The layout should now look something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sda
+ ├─ sda1             EFI             512M
+ ├─ sda2             swap            2G
+ └─ sda3             crypto_LUKS     114G
+      └─ btrfsroot   Btrfs           114G
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Encrypting the swap partition is outside the scope of this article but is possible if needed. See &lt;a href=&#34;https://wiki.archlinux.org/index.php/Dm-crypt/Swap_encryption&#34;&gt;dmcrypt/Swap encryption&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;setting-up-btrfs-and-installing-arch-linux&#34;&gt;Setting up Btrfs and installing Arch Linux&lt;/h2&gt;
+
+&lt;p&gt;Properly create and mount the subvolumes for the actual Arch Linux install.&lt;/p&gt;
+
+&lt;p&gt;First mount the container:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mount /dev/mapper/btrfsroot /mnt
+cd /mnt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now create the subvolumes. In Btrfs these essentially replace (or complement) the traditional partitions scheme. The ultimate scheme is preferencial. This is just one example. There are an infinite number of ways to create and mount subvolumes.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;btrfs subvolume create __arch
+btrfs subvolume create __arch/root
+btrfs subvolume create __arch/home
+btrfs subvolume create __snapshots
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There is one subvolume for the root(&lt;code&gt;/&lt;/code&gt;) directory and one for the home(&lt;code&gt;/home&lt;/code&gt;) directory. The &lt;code&gt;__snapshots&lt;/code&gt; subvolume is where the snapshots of the subvolumes will be stored. Snapshots can be created of the &lt;code&gt;root&lt;/code&gt; or &lt;code&gt;home&lt;/code&gt; subvolumes (or both by snapshotting &lt;code&gt;__arch&lt;/code&gt;) prior to major upgrades as a form of backup. They can also be automated via simple scripts.&lt;/p&gt;
+
+&lt;p&gt;View the subvolumes:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;btrfs subvolume list .
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Unmount the LUKS container:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd
+umount -R /mnt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Decide where to mount the subvolumes and create the appropriate directories.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mount -o subvol=__arch/root /dev/mapper/btrfsroot /mnt
+mkdir /mnt/{home,.snapshots}
+mount -o subvol=__arch/home /dev/mapper/btrfsroot /mnt/home
+mount -o subvol=__snapshots /dev/mapper/btrfsroot /mnt/.snapshots
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This mounts the corresponding subvolumes of the btrfsroot Btrfs filesystem to their appropriate locations.&lt;/p&gt;
+
+&lt;p&gt;Mount the EFI System Partition:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkdir /mnt/boot
+mount /dev/sda1 /mnt/boot
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Select the fastest mirrors and install Arch Linux&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pacstrap -i /mnt base base-devel btrfs-progs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The btrfs-progs package is required in order to manipulate the btrfs install.&lt;/p&gt;
+
+&lt;h2 id=&#34;post-installation&#34;&gt;Post Installation&lt;/h2&gt;
+
+&lt;p&gt;Generate the fstab file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;genfstab -U /mnt &amp;gt; /mnt/etc/fstab
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;genftab doesn&amp;rsquo;t handle btrfs subvolumes very gracefully so edit the file. The subvolume mounting should look something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;LABEL=arch  /           btrfs   rw,relatime,space_cache,subvol=__arch/root  0   0
+LABEL=arch  /home       btrfs   rw,relatime,space_cache,subvol=__arch/home  0   0
+LABEL=arch  /.snapshots btrfs   rw,relatime,space_cache,subvol=__snapshots  0   0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Remove any reference to subvolid in the fstab file. It will conflict with snapshot recovery because snapshots have a seperate subvolume ID. This makes it tricky to easily recover subvolumes using older snapshots because the kernel will still be looking for the subvolume ID of the original subvolume. Subvolid can still be used but requires additional steps to be taken during the snapshotting and recovery process that can be avoided by relying specificallly on the subvolume name.&lt;/p&gt;
+
+&lt;p&gt;Chroot into the install:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;arch-chroot /mnt /bin/bash
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Edit the &lt;code&gt;/etc/mkinitcpio.conf&lt;/code&gt; file to include the &lt;code&gt;encrypt&lt;/code&gt; HOOK before the filesystems hook:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;HOOKS=&amp;quot;... encrypt ... filesystems ...&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Regenerate the initramfs image with the &lt;code&gt;encrypt&lt;/code&gt; hook:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkinitcpio -p linux
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Install the systemd-boot bootloader:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;bootctl install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This will by default install the bootloader in &lt;code&gt;/boot&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Create a file in &lt;code&gt;/boot/loader/entires&lt;/code&gt; called &lt;code&gt;arch.conf&lt;/code&gt;. Determine the unique UUID of the encrypted partition (&lt;code&gt;/dev/sda3&lt;/code&gt;) and of the btrfs LUKS container (&lt;code&gt;/dev/mapper/btrfsroot&lt;/code&gt;)..&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;title   Arch Linux
+linux   /vmlinuz-linux
+initrd  /initramfs-linux.img
+options cryptdevice=UUID=&amp;lt;/dev/sda3 UUID&amp;gt;:btrfsroot root=UUID=&amp;lt;/dev/mapper/btrfsroot UUID&amp;gt; rootflags=subvol=__arch/root rw quiet
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Do not include the chevrons (&amp;lt;, &amp;gt;) in the file. Configure the rest of the system and reboot. Enter the password on restart that was chosen when creating the encrypted LUKS container.&lt;/p&gt;
+
+&lt;h2 id=&#34;snapshots&#34;&gt;Snapshots&lt;/h2&gt;
+
+&lt;p&gt;Snapshots are very straightforward in Btrfs. They act as another subvolume linked to the original. They take up almost no space unless changes are made on the original subvolume in which case they retain the files and hierarchy that existed at the time of the creation of the snapshot.&lt;/p&gt;
+
+&lt;p&gt;To create a snapshot the subvolume must be mounted.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;btrfs subvolume snapshot /home /.snapshots/home-$(date &amp;quot;+%F&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This will create a complete copy of the &lt;code&gt;__arch/home&lt;/code&gt; subvolume in &lt;code&gt;__snapshots&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Because snapshots act as subvolumes they can be viewed, deleted and mounted them the same way.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;btrfs subvolume list /
+btrfs subvolume delete /.snapshots/home-2016-01-25
+mount -o subvol=__snapshots/home-2016-01-25 /dev/mapper/btrfsroot /mnt/home-snapshots
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Snapshots and Subvolumes behave in many ways similar to directories and so they can be renamed using the &lt;code&gt;mv&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mv /.snapshots/home-2016-01-25 /.snapshots/home/2016-01-25
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In order to rollback to a snapshot, first mount the toplevel Btrfs subvolume and simply replace the desired subvolume with the preferred snapshot.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkdir /mnt/btrfs-toplevel
+mount /dev/mapper/btrfsroot /mnt/btrfs-toplevel
+cd /mnt/btrfs-toplevel
+mv __arch/home __arch/home-old
+mv __snapshots/home-2016-01-25 __arch/home
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then reboot and the kernel will mount the new &lt;code&gt;__arch/home&lt;/code&gt; subvolume rather than the &lt;code&gt;__arch/home-old&lt;/code&gt; because fstab determines the appropriate subvolume by name not ID in which case it would attemp to mount &lt;code&gt;__arch/home-old&lt;/code&gt; again.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Starting up with Jekyll and Github</title>
+      <link>http://bassamsaeed.ca/post/starting-up/</link>
+      <pubDate>Mon, 26 Oct 2015 16:33:42 +0000</pubDate>
+      
+      <guid>http://bassamsaeed.ca/post/starting-up/</guid>
+      <description>
+
+&lt;p&gt;I&amp;rsquo;ve decided to actually create a website in order to document my learning as well as interesting information or methodology I stumble across. Essentially a way for me to keep track of certain details that I might need to refer back to. Maybe it&amp;rsquo;ll be helpful for others too.&lt;/p&gt;
+
+&lt;p&gt;Up to this point I&amp;rsquo;ve used a self-hosted wiki to manage this type of information (as well as cooking recipes). This blog is meant to be essentially an extension of that with more detail and my thought process and reasoning behind the decisions I make. Over time I&amp;rsquo;ll probably transfer some information from the wiki over to here in a nicer format.&lt;/p&gt;
+
+&lt;h2 id=&#34;journey-to-jekyll&#34;&gt;Journey to Jekyll&lt;/h2&gt;
+
+&lt;p&gt;Static site generators had always interested me. I&amp;rsquo;d had enough experience with overwrought dynamic CMSs to be a little tired of them. I really don&amp;rsquo;t see the need for them for my small little website. I also generally like to be as close as possible to the actual code as I can. Abstractions on top of abstractions get a little tedious for me.&lt;/p&gt;
+
+&lt;p&gt;This isn&amp;rsquo;t my first time experimenting with static site generators. I actually built one myself for a client&amp;rsquo;s website a few years ago. It was more of a programming project than an attempt at a viable, commercial generator. I used Python for the actual generator while making use of the Jinja2 template engine. Honestly I was pretty proud of it. Especially for what amounted to a weekends worth of work.&lt;/p&gt;
+
+&lt;p&gt;A few days ago when I actually decided to set up this website I considered using my own generator for this site. But I quickly realized that it would need quite a bit of work to function as an actual blog generator. And among the publicly available generators, Jekyll was used automatically by Github Pages (which this site is hosted on). Hence my decision. It doesn&amp;rsquo;t hurt that Jekyll is the most popular and so there&amp;rsquo;s a lot of resources available for it. Finally, I have &lt;em&gt;zero&lt;/em&gt; experience with Ruby so it might be a nice learning tool if I ever end up going into the nitty-gritty of Jekyll.&lt;/p&gt;
+
+&lt;h2 id=&#34;setting-up-github-pages-and-initializing-jekyll&#34;&gt;Setting up Github Pages and initializing Jekyll&lt;/h2&gt;
+
+&lt;p&gt;Creating a Github site for myself was fairly straightforward. A simple repository with a &lt;em&gt;CNAME Record&lt;/em&gt; file that let&amp;rsquo;s Github know my custom domain. And finally a few &lt;em&gt;A Records&lt;/em&gt; with my domain pointed to Github. It&amp;rsquo;s incredibly simple and straightforward.&lt;/p&gt;
+
+&lt;p&gt;Setting up Ruby on my computer was an interesting experience. I recently got a Macbook Pro which would be my first experience with OS X since a Grade 10 Communications course. So I figured I&amp;rsquo;d set it up first on the Macbook rather than my Linux box. The first thing everyone seems to recommend is to install Homebrew, the presumably best package manager on OS X. From there it&amp;rsquo;s on to setting up Ruby.&lt;/p&gt;
+
+&lt;p&gt;There&amp;rsquo;s a lot of different ways of setting up Ruby installs it seems. My version of OS X came with Ruby 2.0.0 pre-installed but I wanted the latest stable which, at the time of writing, was 2.2.3. There&amp;rsquo;s a multitude of ways to accomplish this but I settled on using ruby-install for the actual installation and chruby to manage the various Ruby installs.&lt;/p&gt;
+
+&lt;p&gt;The next step was configuring my Ruby environment. Bundler is helpful in this because it ensures all the Ruby gems match the correct version needed. All I had to do was create a simply &lt;em&gt;Gemfile&lt;/em&gt; file with the names of all the gems I wanted (and their specific versions if needed). In my case the only gem I needed was Jekyll.&lt;/p&gt;
+
+&lt;p&gt;I forwent using the github-pages gem in favour of setting up my Jekyll system myself. After Bundler installed Jekyll, all I had to do was run &lt;code&gt;jekyll new .&lt;/code&gt; in my repository. Jekyll then built the entire framework which I haven&amp;rsquo;t touched at all so far. The only change will be this post.&lt;/p&gt;
+
+&lt;h2 id=&#34;to-infinity&#34;&gt;To Infinity&lt;/h2&gt;
+
+&lt;p&gt;Going forward I&amp;rsquo;m going to keep this website incredibly simple. There&amp;rsquo;s going to be a design change from this default Jekyll skin but I doubt I&amp;rsquo;ll be doing anything truly fancy. I generally prefer a minimalistic style but we&amp;rsquo;ll see if I&amp;rsquo;ll build something a little more complex than Richard Stallman&amp;rsquo;s website.&lt;/p&gt;
+
+&lt;p&gt;Hopefully this&amp;rsquo;ll be fun.&lt;/p&gt;
+
+&lt;p&gt;Or at least interesting.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+	<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
 <head>
   <link href="http://gmpg.org/xfn/11" rel="profile">
@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
   
-  <title>Bassam Saeed</title>
+  <title>How-To: Encrypted Btrfs install on Arch Linux &middot; Bassam Saeed</title>
   
 
   
@@ -23,12 +23,11 @@
   <link rel="shortcut icon" href="/favicon.png">
 
   
-  <link href="http://bassamsaeed.ca/index.xml" rel="alternate" type="application/rss+xml" title="Bassam Saeed" />
+  <link href="" rel="alternate" type="application/rss+xml" title="Bassam Saeed" />
 </head>
 
-<body class=" ">
-
-<div class="sidebar">
+	<body class=" ">
+		<div class="sidebar">
   <div class="container sidebar-sticky">
     <div class="sidebar-about">
       <a href="http://bassamsaeed.ca"><h1>Bassam Saeed</h1></a>
@@ -47,78 +46,11 @@
 </div>
 
 
-    <div class="content container">
-<div class="posts">
-
-      
-  <div class="post">
-    <h1 class="post-title">
-      <a href="http://bassamsaeed.ca/post/lxc-container-networking/">
-        Setting up LXC with Networking
-      </a>
-    </h1>
-
-    <span class="post-date">Sat, May 14, 2016</span>
-
-    <p>From my understaning Ubuntu will setup a bridge by default when you install lxc. Or perhaps when you first create a container. I&rsquo;m not certain. This isn&rsquo;t the case in a lot of other distributions however.</p>
-
-<p>In this guide we&rsquo;ll setup a network bridge. The bridge with be setup on the host system to aggregate the internal container networks with the outer network. In this way the host system will become a bridge from the router to the containers.</p>
-
-<p>First create the virtual link and bring it up.</p>
-
-<pre><code>ip link add name *bridge_name* type bridge
-ip link set *bridge_name* up
-</code></pre>
-
-<p>Add an interface (presumably the LAN interface) to the bridge.</p>
-
-<pre><code>ip link set *interface* master *bridge_name*
-</code></pre>
-
-<p>Get an IP address for the bridge.</p>
-
-<pre><code>dhcpcd *bridge_name*
-</code></pre>
-
-<p>Confirm that the host has a proper connection.</p>
-
-<pre><code>ping -c 1 www.bassamsaeed.ca
-</code></pre>
-
-<p>If everything is working then the bridge is working perfectly. The next step is to properly set up the containers to use the bridge.</p>
-
-<p>First create the container. Use any preferred template.</p>
-
-<pre><code>lxc-create -n *lxc_name* -t debian
-</code></pre>
-
-<p>Edit the config file of the container. This is usually located at <code>/var/lib/lxc/*lxc_name*/config</code>. Add the following two lines:</p>
-
-<pre><code>## network
-lxc.network.type = veth
-lxc.network.link = *bridge_name*
-</code></pre>
-
-<p>This will create an virtual ethernet interface and link it with the bridge.</p>
-
-<p>The guest container is now bridged with the network. DHCP may be configured in the guest container. Static IP may also be configured in the actual container or in the container config file as follows:</p>
-
-<pre><code>lxc.network.ipv4 = 192.168.1.100/24
-lxc.network.ipv4.gateway = 192.168.1.1
-</code></pre>
-
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="http://bassamsaeed.ca/post/encrypted-btrfs-archlinux/">
-        How-To: Encrypted Btrfs install on Arch Linux
-      </a>
-    </h1>
-
-    <span class="post-date">Mon, Jan 25, 2016</span>
-
-    
+		<div class="content container">
+			<div class="post">
+			 	<h1>How-To: Encrypted Btrfs install on Arch Linux</h1>
+			  <span class="post-date">Mon, Jan 25, 2016</span>
+			      
 
 <p>Setting up a Btrfs install while juggling encyption, UEFI, and swap can be tricky so I&rsquo;ve decided to put down my method here. Btrfs is very flexible and can do a lot of things from replacing the MBR/GPT schemes to RAID and then some. Unfortunately it does have some limitations. It doesn&rsquo;t have built-in encyption, doesn&rsquo;t support swap files and -not its fault- can&rsquo;t use UEFI to boot. Encryption can be solved using dm-crypt and the other issues by having their own partitions.</p>
 
@@ -327,55 +259,10 @@ mv __snapshots/home-2016-01-25 __arch/home
 
 <p>Then reboot and the kernel will mount the new <code>__arch/home</code> subvolume rather than the <code>__arch/home-old</code> because fstab determines the appropriate subvolume by name not ID in which case it would attemp to mount <code>__arch/home-old</code> again.</p>
 
-  </div>
-  
-  <div class="post">
-    <h1 class="post-title">
-      <a href="http://bassamsaeed.ca/post/starting-up/">
-        Starting up with Jekyll and Github
-      </a>
-    </h1>
+			</div>
 
-    <span class="post-date">Mon, Oct 26, 2015</span>
-
-    
-
-<p>I&rsquo;ve decided to actually create a website in order to document my learning as well as interesting information or methodology I stumble across. Essentially a way for me to keep track of certain details that I might need to refer back to. Maybe it&rsquo;ll be helpful for others too.</p>
-
-<p>Up to this point I&rsquo;ve used a self-hosted wiki to manage this type of information (as well as cooking recipes). This blog is meant to be essentially an extension of that with more detail and my thought process and reasoning behind the decisions I make. Over time I&rsquo;ll probably transfer some information from the wiki over to here in a nicer format.</p>
-
-<h2 id="journey-to-jekyll">Journey to Jekyll</h2>
-
-<p>Static site generators had always interested me. I&rsquo;d had enough experience with overwrought dynamic CMSs to be a little tired of them. I really don&rsquo;t see the need for them for my small little website. I also generally like to be as close as possible to the actual code as I can. Abstractions on top of abstractions get a little tedious for me.</p>
-
-<p>This isn&rsquo;t my first time experimenting with static site generators. I actually built one myself for a client&rsquo;s website a few years ago. It was more of a programming project than an attempt at a viable, commercial generator. I used Python for the actual generator while making use of the Jinja2 template engine. Honestly I was pretty proud of it. Especially for what amounted to a weekends worth of work.</p>
-
-<p>A few days ago when I actually decided to set up this website I considered using my own generator for this site. But I quickly realized that it would need quite a bit of work to function as an actual blog generator. And among the publicly available generators, Jekyll was used automatically by Github Pages (which this site is hosted on). Hence my decision. It doesn&rsquo;t hurt that Jekyll is the most popular and so there&rsquo;s a lot of resources available for it. Finally, I have <em>zero</em> experience with Ruby so it might be a nice learning tool if I ever end up going into the nitty-gritty of Jekyll.</p>
-
-<h2 id="setting-up-github-pages-and-initializing-jekyll">Setting up Github Pages and initializing Jekyll</h2>
-
-<p>Creating a Github site for myself was fairly straightforward. A simple repository with a <em>CNAME Record</em> file that let&rsquo;s Github know my custom domain. And finally a few <em>A Records</em> with my domain pointed to Github. It&rsquo;s incredibly simple and straightforward.</p>
-
-<p>Setting up Ruby on my computer was an interesting experience. I recently got a Macbook Pro which would be my first experience with OS X since a Grade 10 Communications course. So I figured I&rsquo;d set it up first on the Macbook rather than my Linux box. The first thing everyone seems to recommend is to install Homebrew, the presumably best package manager on OS X. From there it&rsquo;s on to setting up Ruby.</p>
-
-<p>There&rsquo;s a lot of different ways of setting up Ruby installs it seems. My version of OS X came with Ruby 2.0.0 pre-installed but I wanted the latest stable which, at the time of writing, was 2.2.3. There&rsquo;s a multitude of ways to accomplish this but I settled on using ruby-install for the actual installation and chruby to manage the various Ruby installs.</p>
-
-<p>The next step was configuring my Ruby environment. Bundler is helpful in this because it ensures all the Ruby gems match the correct version needed. All I had to do was create a simply <em>Gemfile</em> file with the names of all the gems I wanted (and their specific versions if needed). In my case the only gem I needed was Jekyll.</p>
-
-<p>I forwent using the github-pages gem in favour of setting up my Jekyll system myself. After Bundler installed Jekyll, all I had to do was run <code>jekyll new .</code> in my repository. Jekyll then built the entire framework which I haven&rsquo;t touched at all so far. The only change will be this post.</p>
-
-<h2 id="to-infinity">To Infinity</h2>
-
-<p>Going forward I&rsquo;m going to keep this website incredibly simple. There&rsquo;s going to be a design change from this default Jekyll skin but I doubt I&rsquo;ll be doing anything truly fancy. I generally prefer a minimalistic style but we&rsquo;ll see if I&rsquo;ll build something a little more complex than Richard Stallman&rsquo;s website.</p>
-
-<p>Hopefully this&rsquo;ll be fun.</p>
-
-<p>Or at least interesting.</p>
-
-  </div>
-  
-</div>
-</div>
+			
+		</div>
 
   </body>
 </html>

@@ -1,0 +1,93 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.19" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  
+  <title>Starting up with Jekyll and Github &middot; Bassam Saeed</title>
+  
+
+  
+  <link rel="stylesheet" href="http://bassamsaeed.cacss/poole.css">
+  <link rel="stylesheet" href="http://bassamsaeed.cacss/syntax.css">
+  <link rel="stylesheet" href="http://bassamsaeed.cacss/hyde.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="Bassam Saeed" />
+</head>
+
+	<body class=" ">
+		<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://bassamsaeed.ca"><h1>Bassam Saeed</h1></a>
+      <p class="lead">
+       Personal Dev Blog 
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="/">Home</a> </li>
+      
+    </ul>
+
+    <p>&copy; 2017. All rights reserved. </p>
+  </div>
+</div>
+
+
+		<div class="content container">
+			<div class="post">
+			 	<h1>Starting up with Jekyll and Github</h1>
+			  <span class="post-date">Mon, Oct 26, 2015</span>
+			      
+
+<p>I&rsquo;ve decided to actually create a website in order to document my learning as well as interesting information or methodology I stumble across. Essentially a way for me to keep track of certain details that I might need to refer back to. Maybe it&rsquo;ll be helpful for others too.</p>
+
+<p>Up to this point I&rsquo;ve used a self-hosted wiki to manage this type of information (as well as cooking recipes). This blog is meant to be essentially an extension of that with more detail and my thought process and reasoning behind the decisions I make. Over time I&rsquo;ll probably transfer some information from the wiki over to here in a nicer format.</p>
+
+<h2 id="journey-to-jekyll">Journey to Jekyll</h2>
+
+<p>Static site generators had always interested me. I&rsquo;d had enough experience with overwrought dynamic CMSs to be a little tired of them. I really don&rsquo;t see the need for them for my small little website. I also generally like to be as close as possible to the actual code as I can. Abstractions on top of abstractions get a little tedious for me.</p>
+
+<p>This isn&rsquo;t my first time experimenting with static site generators. I actually built one myself for a client&rsquo;s website a few years ago. It was more of a programming project than an attempt at a viable, commercial generator. I used Python for the actual generator while making use of the Jinja2 template engine. Honestly I was pretty proud of it. Especially for what amounted to a weekends worth of work.</p>
+
+<p>A few days ago when I actually decided to set up this website I considered using my own generator for this site. But I quickly realized that it would need quite a bit of work to function as an actual blog generator. And among the publicly available generators, Jekyll was used automatically by Github Pages (which this site is hosted on). Hence my decision. It doesn&rsquo;t hurt that Jekyll is the most popular and so there&rsquo;s a lot of resources available for it. Finally, I have <em>zero</em> experience with Ruby so it might be a nice learning tool if I ever end up going into the nitty-gritty of Jekyll.</p>
+
+<h2 id="setting-up-github-pages-and-initializing-jekyll">Setting up Github Pages and initializing Jekyll</h2>
+
+<p>Creating a Github site for myself was fairly straightforward. A simple repository with a <em>CNAME Record</em> file that let&rsquo;s Github know my custom domain. And finally a few <em>A Records</em> with my domain pointed to Github. It&rsquo;s incredibly simple and straightforward.</p>
+
+<p>Setting up Ruby on my computer was an interesting experience. I recently got a Macbook Pro which would be my first experience with OS X since a Grade 10 Communications course. So I figured I&rsquo;d set it up first on the Macbook rather than my Linux box. The first thing everyone seems to recommend is to install Homebrew, the presumably best package manager on OS X. From there it&rsquo;s on to setting up Ruby.</p>
+
+<p>There&rsquo;s a lot of different ways of setting up Ruby installs it seems. My version of OS X came with Ruby 2.0.0 pre-installed but I wanted the latest stable which, at the time of writing, was 2.2.3. There&rsquo;s a multitude of ways to accomplish this but I settled on using ruby-install for the actual installation and chruby to manage the various Ruby installs.</p>
+
+<p>The next step was configuring my Ruby environment. Bundler is helpful in this because it ensures all the Ruby gems match the correct version needed. All I had to do was create a simply <em>Gemfile</em> file with the names of all the gems I wanted (and their specific versions if needed). In my case the only gem I needed was Jekyll.</p>
+
+<p>I forwent using the github-pages gem in favour of setting up my Jekyll system myself. After Bundler installed Jekyll, all I had to do was run <code>jekyll new .</code> in my repository. Jekyll then built the entire framework which I haven&rsquo;t touched at all so far. The only change will be this post.</p>
+
+<h2 id="to-infinity">To Infinity</h2>
+
+<p>Going forward I&rsquo;m going to keep this website incredibly simple. There&rsquo;s going to be a design change from this default Jekyll skin but I doubt I&rsquo;ll be doing anything truly fancy. I generally prefer a minimalistic style but we&rsquo;ll see if I&rsquo;ll build something a little more complex than Richard Stallman&rsquo;s website.</p>
+
+<p>Hopefully this&rsquo;ll be fun.</p>
+
+<p>Or at least interesting.</p>
+
+			</div>
+
+			
+		</div>
+
+  </body>
+</html>
