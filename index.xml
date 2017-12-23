@@ -17,7 +17,7 @@
       <pubDate>Sat, 14 May 2016 00:00:00 +0000</pubDate>
       
       <guid>https://www.bassamsaeed.ca/blog/lxc-container-networking/</guid>
-      <description>From my understaning Ubuntu will setup a bridge by default when you install lxc. Or perhaps when you first create a container. I&amp;rsquo;m not certain. This isn&amp;rsquo;t the case in a lot of other distributions however.
+      <description>From my understanding Ubuntu will setup a bridge by default when you install lxc. Or perhaps when you first create a container. I&amp;rsquo;m not certain. This isn&amp;rsquo;t the case in a lot of other distributions however.
 In this guide we&amp;rsquo;ll setup a network bridge. The bridge with be setup on the host system to aggregate the internal container networks with the outer network. In this way the host system will become a bridge from the router to the containers.</description>
     </item>
     
