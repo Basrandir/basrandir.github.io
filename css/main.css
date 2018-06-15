@@ -55,8 +55,9 @@ body {
   width: 100%;
   min-height: 100%;
   font-weight: 400;
-  font-family: 'Open Sans', 'Helvetica Neue', 'Arial', sans-serif;
+  font-family: sans-serif;
   color: #111;
+  background-color: #e1d9c2;
   line-height: 1.6;
   text-rendering: optimizeLegibility !important;
 }
@@ -179,7 +180,7 @@ section.header .avatar {
 }
 section.header .name {
   font-size: 18px;
-  font-family: 'Raleway', 'Helvetica Neue', 'Arial', sans-serif;
+  font-family: sans-serif;
   letter-spacing: -0.005rem;
   font-weight: 700;
   color: #333;
@@ -188,7 +189,7 @@ section.header .name {
 }
 section.header h3.self-intro {
   font-size: 1em;
-  font-family: 'Raleway', 'Helvetica Neue', 'Arial', sans-serif;
+  font-family: sans-serif;
   letter-spacing: -0.005rem;
   font-weight: 700;
   color: #333;
@@ -200,7 +201,7 @@ section.header nav {
   font-size: 14px;
   margin-bottom: 16px;
   text-transform: uppercase;
-  font-family: 'Raleway', 'Helvetica Neue', 'Arial', sans-serif;
+  font-family: sans-serif;
 }
 section.header nav ul {
   list-style: none;
@@ -351,7 +352,7 @@ section.main .content .title-container {
 section.main .content .title-container .initials {
   display: none;
   font-size: 18px;
-  font-family: 'Raleway', 'Helvetica Neue', 'Arial', sans-serif;
+  font-family: sans-serif;
   letter-spacing: -0.005rem;
   font-weight: 700;
   color: #333;
@@ -371,7 +372,7 @@ section.main .content .title-container .initials a:hover {
 }
 section.main .content .page-heading {
   font-size: 18px;
-  font-family: 'Raleway', 'Helvetica Neue', 'Arial', sans-serif;
+  font-family: sans-serif;
   letter-spacing: -0.005rem;
   font-weight: 700;
   color: #333;
@@ -438,7 +439,7 @@ section.main .container.f04 .content {
 section.main .container.f04 .content .num {
   margin: 30px 0px 30px 0;
   font-weight: 200;
-  font-family: 'Raleway', 'Helvetica Neue', 'Arial', sans-serif;
+  font-family: sans-serif;
   font-size: 50px;
 }
 section.main .container.f04 .content .detail {
@@ -493,7 +494,7 @@ section.main .container .content .no-bullet {
 }
 section.main .container .content .no-bullet .date {
   font-size: 18px;
-  font-family: 'Raleway', 'Helvetica Neue', 'Arial', sans-serif;
+  font-family: sans-serif;
   letter-spacing: -0.005rem;
   font-weight: 700;
   color: #333;
@@ -576,7 +577,7 @@ section.main .content .markdown h4,
 section.main .content .markdown h5,
 section.main .content .markdown h6 {
   font-size: 18px;
-  font-family: 'Raleway', 'Helvetica Neue', 'Arial', sans-serif;
+  font-family: sans-serif;
   letter-spacing: -0.005rem;
   font-weight: 700;
   color: #333;
@@ -604,9 +605,9 @@ section.main .content .markdown h6 {
 }
 section.main .content .markdown code,
 section.main .content .markdown pre {
-  font-family: 'Ubuntu Mono', 'Menlo', monospace;
+  font-family: monospace;
   font-size: 1rem;
-  background-color: #f7f7f7;
+  background-color: #e0e0e0;
 }
 section.main .content .markdown code {
   /* enclosed by single backtick (`) */

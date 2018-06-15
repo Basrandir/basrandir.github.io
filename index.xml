@@ -6,10 +6,19 @@
     <description>Recent content on Bassam Saeed</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 14 May 2016 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 14 Jun 2018 23:27:00 -0400</lastBuildDate>
     
 	<atom:link href="https://www.bassamsaeed.ca/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>The Devil is in the Email, Mutt Pt. 1</title>
+      <link>https://www.bassamsaeed.ca/blog/the-devil-is-in-the-email/</link>
+      <pubDate>Thu, 14 Jun 2018 23:27:00 -0400</pubDate>
+      
+      <guid>https://www.bassamsaeed.ca/blog/the-devil-is-in-the-email/</guid>
+      <description>I&amp;rsquo;ve had many false starts with Mutt. It&amp;rsquo;s probably the piece of software I&amp;rsquo;ve had the most trouble getting into. Yes, more than Vim or Emacs. It&amp;rsquo;s not even Mutt&amp;rsquo;s fault really, I think the main culprit is that I always followed the examples and guides of people heavily focused on setting up an incredibly robust system with separate IMAP and SMTP setups. Some even add on custom filtering and tagging.</description>
+    </item>
     
     <item>
       <title>Setting up LXC with Networking</title>
