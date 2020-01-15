@@ -40,7 +40,7 @@ a{
     color: inherit;
 }
 
-a:visited {
+#content a:visited {
     color: rgb(251, 184, 41);
 }
 
