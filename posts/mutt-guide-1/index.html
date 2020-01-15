@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2020-01-15 Wed 18:07 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Devil is in the Email</title>
+<meta name="generator" content="Org mode" />
+<link rel="stylesheet" type="text/css" href="../css/main.css">
+</head>
+<body>
+<div id="preamble" class="status">
+<header>
+  <h1><a href="/">Bassam Saeed</a></h1>
+  <nav>
+    <ul>
+      <li><a href="/posts"><span>Posts</span></a></li>
+      <li><a href="/books"><span>Books</span></a></li>
+    </ul>
+  </nav>
+</header>
+</div>
+<div id="content">
+<h1 class="title">The Devil is in the Email
+<br />
+<span class="subtitle">Mutt Guide Pt. 1</span>
+</h1>
+<p>
+I’ve had many false starts with Mutt. It’s probably the piece of
+software I’ve had the most trouble getting into. Yes, more than Vim or
+Emacs. It’s not even Mutt’s fault really, I think the main culprit is
+that I always followed the examples and guides of people heavily
+focused on setting up an incredibly robust system with separate IMAP
+and SMTP setups. Some even add on custom filtering and tagging. It
+doesn’t help that many of these guides operate under the guise of a
+beginner’s guide.
+</p>
+
+<p>
+I don’t want to sound like I’m condemning these excellent
+resources. There is nothing wrong with such a robust setup. It is
+after all the setup I wanted and one I eventually achieved after weeks
+of tinkering. Most of my problems getting started with Mutt are
+probably my own fault. The <a href="https://wiki.archlinux.org/index.php/Mutt">ArchWiki</a> has an excellent starters guide
+but I’m probably too ambitious and jumped right ahead into trying to
+setup the fully featured, robust setup of my dreams and consequently
+would get a little confused and disheartened.
+</p>
+
+<p>
+In this article I’ll be going through my personal journey setting up
+Mutt to meet my needs and explain my reasoning behind why I did
+certain things the way I did.
+</p>
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgedd1c02">I Started out with Nothing, and I Still Got Most of It Left</a></li>
+<li><a href="#orge9c14be">The Beginnings</a></li>
+<li><a href="#org7ad56b8">Growing Pains</a></li>
+<li><a href="#org431fb68">Unholy Emails</a></li>
+<li><a href="#orgb5836f5">Persistent Mutt</a></li>
+<li><a href="#org21bacab">Good to Go</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgedd1c02" class="outline-2">
+<h2 id="orgedd1c02">I Started out with Nothing, and I Still Got Most of It Left</h2>
+<div class="outline-text-2" id="text-orgedd1c02">
+<p>
+My initial setup is one where Mutt handles (to the best of its
+capabilities) everything I need. The robust setup with separate
+external IMAP, SMTP and tagging capabilities as well as a local copy
+of all my mail will come later. Got to start small.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge9c14be" class="outline-2">
+<h2 id="orge9c14be">The Beginnings</h2>
+<div class="outline-text-2" id="text-orge9c14be">
+<p>
+After having not touched Mutt for almost a year, this <a href="https://www.reddit.com/r/commandline/comments/625i2r/">reddit post</a> got
+me interested in trying Mutt again and building my own solution piece
+by piece just like I did in Vim. So I modified it slightly and this is
+what I started with in my <code>$HOME/.mutt/muttrc</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #f3deea; font-weight: bold;">set</span> folder = <span style="color: #996E7A;">"imaps://imap.gmail.com"</span>
+
+<span style="color: #f3deea; font-weight: bold;">set</span> imap_user = <span style="color: #996E7A;">"bassam.saeed@gmail.com"</span>
+<span style="color: #f3deea; font-weight: bold;">set</span> imap_pass = <span style="color: #996E7A;">`pass mail/gmail/mutt`</span>
+
+<span style="color: #f3deea; font-weight: bold;">set</span> smtp_url  = <span style="color: #996E7A;">"smtps://bassam.saeed@gmail.com@smtp.gmail.com"</span>
+<span style="color: #f3deea; font-weight: bold;">set</span> smtp_pass = <span style="color: #996E7A;">`pass mail/gmail/mutt`</span>
+
+<span style="color: #f3deea; font-weight: bold;">set</span> realname  = <span style="color: #996E7A;">"Bassam Saeed"</span>
+<span style="color: #f3deea; font-weight: bold;">set</span> from      = <span style="color: #996E7A;">"bassam.saeed@gmail.com"</span>
+
+<span style="color: #f3deea; font-weight: bold;">set</span> header_cache     = <span style="color: #996E7A;">"~/.mutt/cache/headers"</span>
+<span style="color: #f3deea; font-weight: bold;">set</span> message_cachedir = <span style="color: #996E7A;">"~/.mutt/cache/bodies"</span>
+
+<span style="color: #f3deea; font-weight: bold;">set</span> spoolfile = <span style="color: #996E7A;">"+INBOX"</span>
+<span style="color: #f3deea; font-weight: bold;">set</span> postponed = <span style="color: #996E7A;">"+[Gmail]/Drafts"</span>
+<span style="color: #f3deea; font-weight: bold;">set</span> trash     = <span style="color: #996E7A;">"+[Gmail]/Trash"</span>
+</pre>
+</div>
+
+<p>
+This is a bare bones configuration but it should be enough to get most
+people at least started with Mutt.
+</p>
+
+<p>
+Most of this should be fairly self-explanatory. The <code>folder</code> setting
+defines the default location of the mailbox. Because I’m not keeping a
+complete copy of all my mail locally, the setting is set to just use
+the Gmail IMAP server. The header and message caches are there so I
+don’t have to re-download them every time I start up Mutt. I consider
+the header cache pretty mandatory but some people may not need the
+message cache. The <code>spoolfile</code> is where unfiltered email arrives. In
+Gmail (and most email providers) this is known as the INBOX so you can
+define that relative to the default mailbox by putting a <code>+</code> in
+front. The <code>postponed</code> and <code>trash</code> settings are defined under
+[Gmail]. Other email providers will have it somewhere else.
+</p>
+
+<p>
+I use the excellent <a href="https://www.passwordstore.org/">pass</a> utility as my password manager and so I allow
+Mutt to run this command for IMAP and SMTP authentication by using
+grave accents (backticks) to query <code>pass</code> for the Gmail password.
+</p>
+
+<p>
+Note: I have two-factor authentication enabled for my Google accounts
+and so I needed to create a separate <a href="https://support.google.com/accounts/answer/185833?hl=en">App Password</a> for use with Mutt.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7ad56b8" class="outline-2">
+<h2 id="org7ad56b8">Growing Pains</h2>
+<div class="outline-text-2" id="text-org7ad56b8">
+<p>
+There are a couple of things I realized quickly were less than ideal
+with my initial setup. In fact within a couple of minutes I had added
+the following setting:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #f3deea; font-weight: bold;">set</span> sort = reverse-date-received
+</pre>
+</div>
+
+<p>
+For better or worse I’ve spent my whole life using email clients where
+the newest email (received or sent) was at the top of the list. Mutt’s
+default of it being on the bottom is completely anathema to me. So I
+changed it almost immediately.
+</p>
+
+<p>
+My primary Gmail account is linked with multiple other Gmail
+accounts. So I needed a way to choose which account I was sending mail
+as:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #f3deea; font-weight: bold;">set</span> edit_headers = yes
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org431fb68" class="outline-2">
+<h2 id="org431fb68">Unholy Emails</h2>
+<div class="outline-text-2" id="text-org431fb68">
+<p>
+Unfortunately in the world we live in, people love to send html
+emails. Some will by courteous enough to include a plain text version
+but many wont. The good news is that there are a decent number of
+command-line browsers that can convert html to plain text within Mutt
+itself.
+</p>
+
+<p>
+First you have to define which browser to use in the <code>mailcap</code> file. By
+default Mutt looks in <code>$HOME/.mailcap</code> for this file but I prefer
+keeping everything in the <code>$HOME/.mutt</code> directory so I changed the
+default mailcap path.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #f3deea; font-weight: bold;">set</span> mailcap_path = <span style="color: #996E7A;">"~/.mutt/mailcap"</span>
+</pre>
+</div>
+
+<p>
+For my browser I settled on <a href="http://elinks.or.cz/">elinks</a> but most console browsers should
+work just fine.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">text/html; elinks -dump; copiousoutput
+</pre>
+</div>
+
+<p>
+The <code>copiousoutput</code> tells Mutt to we’re potentially passing large
+amounts of text and so Mutt invokes a pager. By default this is Mutt’s
+internal pager but you can define an external one using the <code>pager</code>
+setting in your <code>muttrc</code>.
+</p>
+
+<p>
+Now I tell Mutt how to actually handle these files by putting the
+following in my <code>muttrc</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">alternative_order text/plain text/html
+auto_view text/html
+</pre>
+</div>
+
+<p>
+<code>alternative_order</code> prioritizes the plain text version of an email (if
+it exists) over it’s html variant. If it doesn’t exist, it’ll display
+the html version. However by default Mutt doesn’t automatically
+display any non plain text email. You have to invoke that manually, or
+just add the <code>auto_view</code> setting.
+</p>
+
+<p>
+That’s all well and good but what about all the fancy html and styling
+that elinks just can’t render? There are going to be images and fancy
+formatting that I might want to view. In that case I have to resort to
+good old Firefox and put the following in my <code>mailcap</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">text/html; firefox %s;
+</pre>
+</div>
+
+<p>
+It’s important to put that entry above all other <code>text/html</code>
+entires. That way Mutt will default to Firefox when manually
+evoked. Now I can easily open up an email in a Firefox tab by pressing
+<code>v</code> to view the attachments and <code>m</code> on the appropriate <code>text/html</code>
+attachment I want to view in Firefox.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb5836f5" class="outline-2">
+<h2 id="orgb5836f5">Persistent Mutt</h2>
+<div class="outline-text-2" id="text-orgb5836f5">
+<p>
+Initially I would launch Mutt, let it retrieve any new emails and then
+close Mutt when I was done with it. As time went on I found I just
+kept Mutt open in a terminal constantly. Unfortunately Mutt doesn’t
+automatically retireve emails by default. You have to manually sync
+with the server using <code>$</code>. This is easily remedied by adding a simple
+setting to my <code>muttrc</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #f3deea; font-weight: bold;">set</span> imap_check_subscribed
+</pre>
+</div>
+
+<p>
+By default, Gmail will have a list of folders. These are all defined
+in the Labels tab of Gmail’s settings. There’s a handful of default
+ones (some we’ve already seen like Trash, Sent, and INBOX) and any
+custom ones we can define. The <code>imap_check_subscribed</code> setting adds all
+these to the <code>mailboxes</code> list which are then automatically polled for
+new mail. I want to query everything for new mail but if I wanted to
+query only specific folders I could get rid of the
+<code>imap_check_subscribed</code> setting and add the individual folders to the
+<code>mailboxes</code> list like this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">mailboxes +INBOX +friends +work
+</pre>
+</div>
+
+<p>
+There is a setting called <code>mailcheck</code> that determines how often Mutt
+checks the <code>mailboxes</code> for new mail. The default is 5 seconds which in
+my opinion is unnecessary for most people. I changed it to 120 seconds
+(or 2 minutes) for my needs.
+</p>
+
+<p>
+There are a few other settings that worthwhile to look into. <code>timeout</code>,
+<code>imap_keepalive</code>, and <code>imap_passive</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org21bacab" class="outline-2">
+<h2 id="org21bacab">Good to Go</h2>
+<div class="outline-text-2" id="text-org21bacab">
+<p>
+At this point we have a configuration that I would consider acceptable
+for everyday use. Here’s what mine looked like exactly.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #605E91;">## </span><span style="color: #605E91;">IMAP</span>
+<span style="color: #f3deea; font-weight: bold;">set</span> folder = <span style="color: #996E7A;">"imaps://imap.gmail.com"</span>
+
+<span style="color: #f3deea; font-weight: bold;">set</span> imap_user = <span style="color: #996E7A;">"bassam.saeed@gmail.com"</span>
+<span style="color: #f3deea; font-weight: bold;">set</span> imap_pass = <span style="color: #996E7A;">`pass mail/gmail/mutt`</span>
+
+<span style="color: #f3deea; font-weight: bold;">set</span>   imap_check_subscribed
+<span style="color: #f3deea; font-weight: bold;">unset</span> imap_passive
+<span style="color: #f3deea; font-weight: bold;">set</span>   mail_check = 120
+
+<span style="color: #605E91;">## </span><span style="color: #605E91;">SMTP</span>
+<span style="color: #f3deea; font-weight: bold;">set</span> smtp_url  = <span style="color: #996E7A;">"smtps://bassam.saeed@gmail.com@smtp.gmail.com"</span>
+<span style="color: #f3deea; font-weight: bold;">set</span> smtp_pass = <span style="color: #996E7A;">`pass mail/gmail/mutt`</span>
+
+<span style="color: #f3deea; font-weight: bold;">set</span> realname  = <span style="color: #996E7A;">"Bassam Saeed"</span>
+<span style="color: #f3deea; font-weight: bold;">set</span> from      = <span style="color: #996E7A;">"bassam.saeed@gmail.com"</span>
+
+<span style="color: #f3deea; font-weight: bold;">set</span> edit_headers = yes
+
+<span style="color: #605E91;">## </span><span style="color: #605E91;">LOCATIONS</span>
+<span style="color: #f3deea; font-weight: bold;">set</span> header_cache     = <span style="color: #996E7A;">"~/.mutt/cache/headers"</span>
+<span style="color: #f3deea; font-weight: bold;">set</span> message_cachedir = <span style="color: #996E7A;">"~/.mutt/cache/bodies"</span>
+<span style="color: #f3deea; font-weight: bold;">set</span> mailcap_path     = <span style="color: #996E7A;">"~/.mutt/mailcap"</span>
+
+<span style="color: #605E91;">## </span><span style="color: #605E91;">FOLDERS</span>
+<span style="color: #f3deea; font-weight: bold;">set</span> spoolfile = <span style="color: #996E7A;">"+INBOX"</span>
+<span style="color: #f3deea; font-weight: bold;">set</span> postponed = <span style="color: #996E7A;">"+[Gmail]/Drafts"</span>
+<span style="color: #f3deea; font-weight: bold;">set</span> trash     = <span style="color: #996E7A;">"+[Gmail]/Trash"</span>
+
+<span style="color: #605E91;">## </span><span style="color: #605E91;">UI</span>
+alternative_order text/plain text/html
+auto_view text/html
+
+<span style="color: #f3deea; font-weight: bold;">set</span> sort = reverse-date-received
+</pre>
+</div>
+
+<p>
+I am currently working on part two, hopefully it’ll be up soon.
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<footer>
+  <p>
+    <small>&copy; Copyright 2020, Bassam Saeed</small>
+  </p>
+</footer>
+</div>
+</body>
+</html>

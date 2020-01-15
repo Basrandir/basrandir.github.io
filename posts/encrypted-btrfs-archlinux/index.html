@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2020-01-15 Wed 18:07 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How-To: Encrypted Btrfs install on Arch Linux</title>
+<meta name="generator" content="Org mode" />
+<link rel="stylesheet" type="text/css" href="../css/main.css">
+</head>
+<body>
+<div id="preamble" class="status">
+<header>
+  <h1><a href="/">Bassam Saeed</a></h1>
+  <nav>
+    <ul>
+      <li><a href="/posts"><span>Posts</span></a></li>
+      <li><a href="/books"><span>Books</span></a></li>
+    </ul>
+  </nav>
+</header>
+</div>
+<div id="content">
+<h1 class="title">How-To: Encrypted Btrfs install on Arch Linux</h1>
+<p>
+Setting up a Btrfs install while juggling encyption, UEFI, and swap
+can be tricky so I’ve decided to put down my method here. Btrfs is
+damn flexible and can do a lot of things from replacing the MBR/GPT
+schemes to RAID and then some. Unfortunately it does have some
+limitations. It doesn’t have built-in encryption, doesn’t support swap
+files and -not its fault- can’t use UEFI to boot. Encryption can be
+solved using dm-crypt and the other issues by having their own
+partitions.
+</p>
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org2b7f276">Partitioning</a></li>
+<li><a href="#org4ff1237">Encyption</a></li>
+<li><a href="#org3a777cb">Setting up Btrfs and installing Arch Linux</a></li>
+<li><a href="#org3cec7f4">Post Installation</a></li>
+<li><a href="#orgd686a27">Snapshots</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org2b7f276" class="outline-2">
+<h2 id="org2b7f276">Partitioning</h2>
+<div class="outline-text-2" id="text-org2b7f276">
+<p>
+To begin with decide how exactly the install will be set up. If UEFI
+boot isn’t needed then there is no need for a separate EFI System
+Partition.
+</p>
+
+<p>
+<b>Note</b>: Skip this and the Formatting step if neither UEFI or swap is
+required.
+</p>
+
+<p>
+For this example, create 3 partitions:
+</p>
+<ol class="org-ol">
+<li>A small EFI System Partition for UEFI boot. ~ <i>512M</i></li>
+<li>Swap partition for hibernation. ~ <i>Size of RAM</i></li>
+<li>A final partition that will be the encrypted Btrfs Arch Linux
+install. <i>Rest of the drive.</i></li>
+</ol>
+
+<p>
+When done it should look something like this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">sda
+ &#9500;&#9472; sda1     EFI     512 MB
+ &#9500;&#9472; sda2     swap    2 GB
+ &#9492;&#9472; sda3             114 GB
+</pre>
+</div>
+
+<p>
+Set the EFI partition as bootable using whatever method you used to
+create the partitions.  Formatting
+</p>
+
+<p>
+Format the EFI and swap partitions correctly.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">mkfs.fat -F32 /dev/sda1
+mkswap /dev/sda2
+</pre>
+</div>
+
+<p>
+And activate swap:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">swapon /dev/sda2
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4ff1237" class="outline-2">
+<h2 id="org4ff1237">Encyption</h2>
+<div class="outline-text-2" id="text-org4ff1237">
+<p>
+The first thing that needs to be done is to create a LUKS encrypted
+container in the final partition using dm-crypt.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">cryptsetup -vy luksFormat /dev/sda3
+</pre>
+</div>
+
+<p>
+The -y option is required to verify the password. Make sure it’s a
+secure password and don’t forget it. It will be required at the start
+of every boot..
+</p>
+
+<p>
+Next unlock the encrypted container and enter the password:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">cryptsetup open /dev/sda3 btrfsroot
+</pre>
+</div>
+
+<p>
+Replace <code>btrfsroot</code> with any preferred name. This will map the LUKS
+container to <code>/dev/mapper/btrfsroot</code>.
+</p>
+
+<p>
+Create the btrfs filesystem:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">mkfs.btrfs -L <span style="color: #996E7A;">"arch"</span> /dev/mapper/btrfsroot
+</pre>
+</div>
+
+<p>
+The <code>arch</code> label will be used to mount the various Btrfs subvolumes in
+fstab. The layout should now look something like this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">sda
+ &#9500;&#9472; sda1             EFI             512M
+ &#9500;&#9472; sda2             swap            2G
+ &#9492;&#9472; sda3             crypto_LUKS     114G
+      &#9492;&#9472; btrfsroot   Btrfs           114G
+</pre>
+</div>
+
+<p>
+<b>Note</b>: Encrypting the swap partition is outside the scope of this
+article but is possible if needed. See <a href="https://wiki.archlinux.org/index.php/Dm-crypt/Swap_encryption">dmcrypt/Swap encryption</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3a777cb" class="outline-2">
+<h2 id="org3a777cb">Setting up Btrfs and installing Arch Linux</h2>
+<div class="outline-text-2" id="text-org3a777cb">
+<p>
+Properly create and mount the subvolumes for the actual Arch Linux
+install.
+</p>
+
+<p>
+First mount the container:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">mount /dev/mapper/btrfsroot /mnt
+<span style="color: #f3deea; font-weight: bold;">cd</span> /mnt
+</pre>
+</div>
+
+<p>
+Now create the subvolumes. In Btrfs these essentially replace (or
+complement) the traditional partitions scheme. The ultimate scheme is
+preferencial. This is just one example. There are an infinite number
+of ways to create and mount subvolumes.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">btrfs subvolume create __arch
+btrfs subvolume create __arch/root
+btrfs subvolume create __arch/home
+btrfs subvolume create __snapshots
+</pre>
+</div>
+
+<p>
+There is one subvolume for the root(<code>/</code>) directory and one for the
+home(<code>/home</code>) directory. The <code>__snapshots</code> subvolume is where the
+snapshots of the subvolumes will be stored. Snapshots can be created
+of the <code>root</code> or <code>home</code> subvolumes (or both by snapshotting <code>__arch</code>) prior
+to major upgrades as a form of backup. They can also be automated via
+simple scripts.
+</p>
+
+<p>
+View the subvolumes:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">btrfs subvolume list .
+</pre>
+</div>
+
+<p>
+Unmount the LUKS container:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #f3deea; font-weight: bold;">cd</span>
+umount -R /mnt
+</pre>
+</div>
+
+<p>
+Decide where to mount the subvolumes and create the appropriate
+directories.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">mount -o <span style="color: #996E7A;">subvol</span>=__arch/root /dev/mapper/btrfsroot /mnt
+mkdir /mnt/{home,.snapshots}
+mount -o <span style="color: #996E7A;">subvol</span>=__arch/home /dev/mapper/btrfsroot /mnt/home
+mount -o <span style="color: #996E7A;">subvol</span>=__snapshots /dev/mapper/btrfsroot /mnt/.snapshots
+</pre>
+</div>
+
+<p>
+This mounts the corresponding subvolumes of the btrfsroot Btrfs
+filesystem to their appropriate locations.
+</p>
+
+<p>
+Mount the EFI System Partition:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">mkdir /mnt/boot
+mount /dev/sda1 /mnt/boot
+</pre>
+</div>
+
+<p>
+Select the fastest mirrors and install Arch Linux
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">pacstrap -i /mnt base base-devel btrfs-progs
+</pre>
+</div>
+
+<p>
+The btrfs-progs package is required in order to manipulate the btrfs
+install.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3cec7f4" class="outline-2">
+<h2 id="org3cec7f4">Post Installation</h2>
+<div class="outline-text-2" id="text-org3cec7f4">
+<p>
+Generate the fstab file:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">genfstab -U /mnt &gt; /mnt/etc/fstab
+</pre>
+</div>
+
+<p>
+genftab doesn’t handle btrfs subvolumes gracefully so edit the
+file. The subvolume mounting should look something like this:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #996E7A;">LABEL</span>=arch  /           btrfs   rw,relatime,space_cache,<span style="color: #996E7A;">subvol</span>=__arch/root  0   0
+<span style="color: #996E7A;">LABEL</span>=arch  /home       btrfs   rw,relatime,space_cache,<span style="color: #996E7A;">subvol</span>=__arch/home  0   0
+<span style="color: #996E7A;">LABEL</span>=arch  /.snapshots btrfs   rw,relatime,space_cache,<span style="color: #996E7A;">subvol</span>=__snapshots  0   0
+</pre>
+</div>
+
+<p>
+Remove any reference to subvolid in the fstab file. It will conflict
+with snapshot recovery because snapshots have a seperate subvolume
+ID. This makes it tricky to easily recover subvolumes using older
+snapshots because the kernel will still be looking for the subvolume
+ID of the original subvolume. Subvolid can still be used but requires
+additional steps to be taken during the snapshotting and recovery
+process that can be avoided by relying specificallly on the subvolume
+name.
+</p>
+
+<p>
+Chroot into the install:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">arch-chroot /mnt /bin/bash
+</pre>
+</div>
+
+<p>
+Edit the <code>/etc/mkinitcpio.conf</code> file to include the <code>encrypt</code> HOOK before
+the filesystems hook:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #996E7A;">HOOKS</span>=<span style="color: #996E7A;">"... encrypt ... filesystems ..."</span>
+</pre>
+</div>
+
+<p>
+Regenerate the initramfs image with the <code>encrypt</code> hook:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">mkinitcpio -p linux
+</pre>
+</div>
+
+<p>
+Install the systemd-boot bootloader:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">bootctl install
+</pre>
+</div>
+
+<p>
+This will by default install the bootloader in <code>/boot</code>.
+</p>
+
+<p>
+Create a file in <code>/boot/loader/entires</code> called <code>arch.conf</code>. Determine the
+unique UUID of the encrypted partition (<code>/dev/sda3</code>) and of the btrfs
+LUKS container (<code>/dev/mapper/btrfsroot</code>).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">title   Arch Linux
+linux   /vmlinuz-linux
+initrd  /initramfs-linux.img
+options <span style="color: #996E7A;">cryptdevice</span>=<span style="color: #996E7A;">UUID</span>=&lt;/dev/sda3 UUID&gt;:btrfsroot <span style="color: #996E7A;">root</span>=<span style="color: #996E7A;">UUID</span>=&lt;/dev/mapper/btrfsroot UUID&gt; <span style="color: #996E7A;">rootflags</span>=<span style="color: #996E7A;">subvol</span>=__arch/root rw quiet
+</pre>
+</div>
+
+<p>
+Do not include the chevrons (&lt;, &gt;) in the file. Configure the rest of
+the system and reboot. Enter the password on restart that was chosen
+when creating the encrypted LUKS container.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd686a27" class="outline-2">
+<h2 id="orgd686a27">Snapshots</h2>
+<div class="outline-text-2" id="text-orgd686a27">
+<p>
+Snapshots are straightforward in Btrfs. They act as another subvolume
+linked to the original. They take up almost no space unless changes
+are made on the original subvolume in which case they retain the files
+and hierarchy that existed at the time of the creation of the
+snapshot.
+</p>
+
+<p>
+To create a snapshot the subvolume must be mounted.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">btrfs subvolume snapshot /home /.snapshots/home-$(<span style="color: #996E7A;">date</span> <span style="color: #996E7A;">"+%F"</span>)
+</pre>
+</div>
+
+<p>
+This will create a complete copy of the <code>__arch/home</code> subvolume in
+<code>__snapshots</code>.
+</p>
+
+<p>
+Because snapshots act as subvolumes they can be viewed, deleted and
+mounted them the same way.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">btrfs subvolume list /
+btrfs subvolume delete /.snapshots/home-2016-01-25
+mount -o <span style="color: #996E7A;">subvol</span>=__snapshots/home-2016-01-25 /dev/mapper/btrfsroot /mnt/home-snapshots
+</pre>
+</div>
+
+<p>
+Snapshots and Subvolumes behave in many ways similar to directories
+and so they can be renamed using the <code>mv</code> command.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">mv /.snapshots/home-2016-01-25 /.snapshots/home/2016-01-25
+</pre>
+</div>
+
+<p>
+In order to rollback to a snapshot, first mount the toplevel Btrfs
+subvolume and simply replace the desired subvolume with the preferred
+snapshot.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">mkdir /mnt/btrfs-toplevel
+mount /dev/mapper/btrfsroot /mnt/btrfs-toplevel
+<span style="color: #f3deea; font-weight: bold;">cd</span> /mnt/btrfs-toplevel
+mv __arch/home __arch/home-old
+mv __snapshots/home-2016-01-25 __arch/home
+</pre>
+</div>
+
+<p>
+Then reboot and the kernel will mount the new <code>__arch/home</code> subvolume
+rather than the <code>__arch/home-old</code> because fstab determines the
+appropriate subvolume by name not ID in which case it would attempt to
+mount <code>__arch/home-old</code> again.
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<footer>
+  <p>
+    <small>&copy; Copyright 2020, Bassam Saeed</small>
+  </p>
+</footer>
+</div>
+</body>
+</html>
