@@ -36,12 +36,16 @@ p, pre, ol, ul, table{
 }
 
 /* Better anchor tags */
-a{
-    color: inherit;
-}
-
 #content a:visited {
     color: rgb(251, 184, 41);
+}
+
+#content a:hover{
+    color: #028090;
+}
+
+a{
+    color: inherit;
 }
 
 a:hover{
