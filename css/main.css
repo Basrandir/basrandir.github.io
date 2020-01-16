@@ -48,6 +48,14 @@ a:hover{
     color: #028090;
 }
 
+#text-table-of-contents {
+    overflow-x: auto;
+}
+
+#text-table-of-contents > ul {
+    margin: 1em 0;
+}
+
 /* Force footer to bottom and center */
 #postamble{
     text-align: center;
