@@ -4,42 +4,9 @@
 <title>Bassam Saeed</title>
 <description>Personal Dev Blog RSS</description>
 <generator>Emacs webfeeder.el</generator>
-<link>https://bassamsaeed.ca</link>
-<atom:link href="https://bassamsaeed.ca/rss.xml" rel="self" type="application/rss+xml"/>
-<lastBuildDate>Sun, 19 Jan 2020 00:53:01 -0500</lastBuildDate>
-<item>
-  <author>Bassam Saeed</author>
-  <title>Home</title>
-  <description><![CDATA[<div id="content">
- <h1 class="title">Home</h1>
- <div id="outline-container-orgc7a6c23" class="outline-2">
- <h2 id="orgc7a6c23">Bio</h2>
- <div class="outline-text-2" id="text-orgc7a6c23">
- <p>
-Software Developer with a background in Systems and Network
-Administration.
-</p>
-</div>
-</div>
-
- <div id="outline-container-org26ef884" class="outline-2">
- <h2 id="org26ef884">Personal Projects</h2>
- <div class="outline-text-2" id="text-org26ef884">
- <ul class="org-ul"> <li> <b> <a href="https://github.com/kalq/Phone-Book">Phone Book</a></b>
-A simple command line phone book implemented using an array of BSTs.</li>
- <li> <b> <a href="https://github.com/kalq/thelost">TheLost</a></b>
-Simple IRC bot build from scratch in Python -> no IRC libraries.</li>
- <li> <b> <a href="https://github.com/kalq/Basyan-Library">Basyan Library</a></b>
-A personal book library management system web app.</li>
- <li> <b> <a href="https://github.com/kalq/nbalivescore">nbalivescore</a></b>
-Scrape live NBA box scores from Yahoo Sports.</li>
-</ul></div>
-</div>
-</div>]]></description>
-  <link>https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/index.html</link>
-  <guid isPermaLink="false">https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/index.html</guid>
-  <pubDate>Thu, 16 Jan 2020 18:22:00 -0500</pubDate>
-</item>
+<link>https://www.bassamsaeed.ca/</link>
+<atom:link href="https://www.bassamsaeed.ca/rss.xml" rel="self" type="application/rss+xml"/>
+<lastBuildDate>Sun, 19 Jan 2020 01:33:43 -0500</lastBuildDate>
 <item>
   <title>How-To: Encrypted Btrfs install on Arch Linux</title>
   <description><![CDATA[<div id="content">
@@ -464,8 +431,8 @@ mount  <code>__arch/home-old</code> again.
 </div>
 </div>
 </div>]]></description>
-  <link>https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/encrypted-btrfs-archlinux/index.html</link>
-  <guid isPermaLink="false">https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/encrypted-btrfs-archlinux/index.html</guid>
+  <link>https://www.bassamsaeed.ca/posts/encrypted-btrfs-archlinux/index.html</link>
+  <guid isPermaLink="false">https://www.bassamsaeed.ca/posts/encrypted-btrfs-archlinux/index.html</guid>
   <pubDate>Thu, 16 Jan 2020 00:51:00 -0500</pubDate>
 </item>
 <item>
@@ -567,8 +534,8 @@ lxc.network.ipv4.gateway = 192.168.1.1
 </pre>
 </div>
 </div>]]></description>
-  <link>https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/lxc-container-networking/index.html</link>
-  <guid isPermaLink="false">https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/lxc-container-networking/index.html</guid>
+  <link>https://www.bassamsaeed.ca/posts/lxc-container-networking/index.html</link>
+  <guid isPermaLink="false">https://www.bassamsaeed.ca/posts/lxc-container-networking/index.html</guid>
   <pubDate>Thu, 16 Jan 2020 00:51:00 -0500</pubDate>
 </item>
 <item>
@@ -907,8 +874,8 @@ I am currently working on part two, hopefully it’ll be up soon.
 </div>
 </div>
 </div>]]></description>
-  <link>https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/mutt-guide-1/index.html</link>
-  <guid isPermaLink="false">https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/mutt-guide-1/index.html</guid>
+  <link>https://www.bassamsaeed.ca/posts/mutt-guide-1/index.html</link>
+  <guid isPermaLink="false">https://www.bassamsaeed.ca/posts/mutt-guide-1/index.html</guid>
   <pubDate>Thu, 16 Jan 2020 00:51:00 -0500</pubDate>
 </item>
 <item>
@@ -1035,8 +1002,8 @@ Or at least interesting.
 </div>
 </div>
 </div>]]></description>
-  <link>https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/starting-up/index.html</link>
-  <guid isPermaLink="false">https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/starting-up/index.html</guid>
+  <link>https://www.bassamsaeed.ca/posts/starting-up/index.html</link>
+  <guid isPermaLink="false">https://www.bassamsaeed.ca/posts/starting-up/index.html</guid>
   <pubDate>Thu, 16 Jan 2020 00:51:00 -0500</pubDate>
 </item>
 <item>
@@ -1050,8 +1017,8 @@ Or at least interesting.
  <li>Jan 25, 2016  <i> <a href="encrypted-btrfs-archlinux/">How-To: Encrypted Btrfs install on Arch Linux</a></i></li>
  <li>Oct 26, 2015  <i> <a href="starting-up/">Starting Up With Jekyll and Github</a></i></li>
 </ul></div>]]></description>
-  <link>https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/index.html</link>
-  <guid isPermaLink="false">https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/index.html</guid>
+  <link>https://www.bassamsaeed.ca/posts/index.html</link>
+  <guid isPermaLink="false">https://www.bassamsaeed.ca/posts/index.html</guid>
   <pubDate>Thu, 16 Jan 2020 00:51:00 -0500</pubDate>
 </item>
 </channel>
