@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-<title>Bassam Saeed</title>
-<description>Personal Dev Blog RSS</description>
+<author><name>Bassam Saeed</name></author>
+<title>Bassam Saeed's Dev Blog</title>
+<description>Personal Dev Blog</description>
 <generator>Emacs webfeeder.el</generator>
-<link>https://www.bassamsaeed.ca/</link>
+<link>https://www.bassamsaeed.ca</link>
 <atom:link href="https://www.bassamsaeed.ca/rss.xml" rel="self" type="application/rss+xml"/>
-<lastBuildDate>Sun, 19 Jan 2020 01:33:43 -0500</lastBuildDate>
+<lastBuildDate>Sun, 19 Jan 2020 01:51:14 -0500</lastBuildDate>
 <item>
   <title>How-To: Encrypted Btrfs install on Arch Linux</title>
   <description><![CDATA[<div id="content">
@@ -433,7 +434,7 @@ mount  <code>__arch/home-old</code> again.
 </div>]]></description>
   <link>https://www.bassamsaeed.ca/posts/encrypted-btrfs-archlinux/index.html</link>
   <guid isPermaLink="false">https://www.bassamsaeed.ca/posts/encrypted-btrfs-archlinux/index.html</guid>
-  <pubDate>Thu, 16 Jan 2020 00:51:00 -0500</pubDate>
+  <pubDate>Mon, 25 Jan 2016 00:51:00 -0500</pubDate>
 </item>
 <item>
   <title>Setting up LXC with Networking</title>
@@ -536,7 +537,7 @@ lxc.network.ipv4.gateway = 192.168.1.1
 </div>]]></description>
   <link>https://www.bassamsaeed.ca/posts/lxc-container-networking/index.html</link>
   <guid isPermaLink="false">https://www.bassamsaeed.ca/posts/lxc-container-networking/index.html</guid>
-  <pubDate>Thu, 16 Jan 2020 00:51:00 -0500</pubDate>
+  <pubDate>Sat, 14 May 2016 00:51:00 -0500</pubDate>
 </item>
 <item>
   <title>The Devil is in the Email, Mutt Guide Pt. 1</title>
@@ -876,7 +877,7 @@ I am currently working on part two, hopefully it’ll be up soon.
 </div>]]></description>
   <link>https://www.bassamsaeed.ca/posts/mutt-guide-1/index.html</link>
   <guid isPermaLink="false">https://www.bassamsaeed.ca/posts/mutt-guide-1/index.html</guid>
-  <pubDate>Thu, 16 Jan 2020 00:51:00 -0500</pubDate>
+  <pubDate>Thu, Jun 14 2018 00:51:00 -0500</pubDate>
 </item>
 <item>
   <title>Starting Up With Jekyll and Github</title>
@@ -1004,22 +1005,7 @@ Or at least interesting.
 </div>]]></description>
   <link>https://www.bassamsaeed.ca/posts/starting-up/index.html</link>
   <guid isPermaLink="false">https://www.bassamsaeed.ca/posts/starting-up/index.html</guid>
-  <pubDate>Thu, 16 Jan 2020 00:51:00 -0500</pubDate>
-</item>
-<item>
-  <title>Posts</title>
-  <description><![CDATA[<div id="content">
- <h1 class="title">Posts
- <br></br> <span class="subtitle">Jan 16, 2020</span>
-</h1>
- <ul class="org-ul"> <li>Jun 14, 2018  <i> <a href="mutt-guide-1/">The Devil is in the Email</a></i></li>
- <li>May 14, 2016  <i> <a href="lxc-container-networking/">Setting up LXC with Networking</a></i></li>
- <li>Jan 25, 2016  <i> <a href="encrypted-btrfs-archlinux/">How-To: Encrypted Btrfs install on Arch Linux</a></i></li>
- <li>Oct 26, 2015  <i> <a href="starting-up/">Starting Up With Jekyll and Github</a></i></li>
-</ul></div>]]></description>
-  <link>https://www.bassamsaeed.ca/posts/index.html</link>
-  <guid isPermaLink="false">https://www.bassamsaeed.ca/posts/index.html</guid>
-  <pubDate>Thu, 16 Jan 2020 00:51:00 -0500</pubDate>
+  <pubDate>Mon, Oct 26 2015 00:51:00 -0500</pubDate>
 </item>
 </channel>
 </rss>
