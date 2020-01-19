@@ -1,0 +1,1058 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>Bassam Saeed</title>
+<description>Personal Dev Blog RSS</description>
+<generator>Emacs webfeeder.el</generator>
+<link>https://bassamsaeed.ca</link>
+<atom:link href="https://bassamsaeed.ca/rss.xml" rel="self" type="application/rss+xml"/>
+<lastBuildDate>Sun, 19 Jan 2020 00:53:01 -0500</lastBuildDate>
+<item>
+  <author>Bassam Saeed</author>
+  <title>Home</title>
+  <description><![CDATA[<div id="content">
+ <h1 class="title">Home</h1>
+ <div id="outline-container-orgc7a6c23" class="outline-2">
+ <h2 id="orgc7a6c23">Bio</h2>
+ <div class="outline-text-2" id="text-orgc7a6c23">
+ <p>
+Software Developer with a background in Systems and Network
+Administration.
+</p>
+</div>
+</div>
+
+ <div id="outline-container-org26ef884" class="outline-2">
+ <h2 id="org26ef884">Personal Projects</h2>
+ <div class="outline-text-2" id="text-org26ef884">
+ <ul class="org-ul"> <li> <b> <a href="https://github.com/kalq/Phone-Book">Phone Book</a></b>
+A simple command line phone book implemented using an array of BSTs.</li>
+ <li> <b> <a href="https://github.com/kalq/thelost">TheLost</a></b>
+Simple IRC bot build from scratch in Python -> no IRC libraries.</li>
+ <li> <b> <a href="https://github.com/kalq/Basyan-Library">Basyan Library</a></b>
+A personal book library management system web app.</li>
+ <li> <b> <a href="https://github.com/kalq/nbalivescore">nbalivescore</a></b>
+Scrape live NBA box scores from Yahoo Sports.</li>
+</ul></div>
+</div>
+</div>]]></description>
+  <link>https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/index.html</link>
+  <guid isPermaLink="false">https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/index.html</guid>
+  <pubDate>Thu, 16 Jan 2020 18:22:00 -0500</pubDate>
+</item>
+<item>
+  <title>How-To: Encrypted Btrfs install on Arch Linux</title>
+  <description><![CDATA[<div id="content">
+ <h1 class="title">How-To: Encrypted Btrfs install on Arch Linux
+ <br></br> <span class="subtitle">Jan 25, 2016</span>
+</h1>
+ <p>
+Setting up a Btrfs install while juggling encyption, UEFI, and swap
+can be tricky so I’ve decided to put down my method here. Btrfs is
+damn flexible and can do a lot of things from replacing the MBR/GPT
+schemes to RAID and then some. Unfortunately it does have some
+limitations. It doesn’t have built-in encryption, doesn’t support swap
+files and -not its fault- can’t use UEFI to boot. Encryption can be
+solved using dm-crypt and the other issues by having their own
+partitions.
+</p>
+
+ <div id="table-of-contents">
+ <h2>Table of Contents</h2>
+ <div id="text-table-of-contents">
+ <ul> <li> <a href="#org2b7f276">Partitioning</a></li>
+ <li> <a href="#org4ff1237">Encyption</a></li>
+ <li> <a href="#org3a777cb">Setting up Btrfs and installing Arch Linux</a></li>
+ <li> <a href="#org3cec7f4">Post Installation</a></li>
+ <li> <a href="#orgd686a27">Snapshots</a></li>
+</ul></div>
+</div>
+
+ <div id="outline-container-org2b7f276" class="outline-2">
+ <h2 id="org2b7f276">Partitioning</h2>
+ <div class="outline-text-2" id="text-org2b7f276">
+ <p>
+To begin with decide how exactly the install will be set up. If UEFI
+boot isn’t needed then there is no need for a separate EFI System
+Partition.
+</p>
+
+ <p>
+ <b>Note</b>: Skip this and the Formatting step if neither UEFI or swap is
+required.
+</p>
+
+ <p>
+For this example, create 3 partitions:
+</p>
+ <ol class="org-ol"> <li>A small EFI System Partition for UEFI boot. ~  <i>512M</i></li>
+ <li>Swap partition for hibernation. ~  <i>Size of RAM</i></li>
+ <li>A final partition that will be the encrypted Btrfs Arch Linux
+install.  <i>Rest of the drive.</i></li>
+</ol> <p>
+When done it should look something like this:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">sda
+ ├─ sda1     EFI     512 MB
+ ├─ sda2     swap    2 GB
+ └─ sda3             114 GB
+</pre>
+</div>
+
+ <p>
+Set the EFI partition as bootable using whatever method you used to
+create the partitions.  Formatting
+</p>
+
+ <p>
+Format the EFI and swap partitions correctly.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">mkfs.fat -F32 /dev/sda1
+mkswap /dev/sda2
+</pre>
+</div>
+
+ <p>
+And activate swap:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">swapon /dev/sda2
+</pre>
+</div>
+</div>
+</div>
+
+ <div id="outline-container-org4ff1237" class="outline-2">
+ <h2 id="org4ff1237">Encyption</h2>
+ <div class="outline-text-2" id="text-org4ff1237">
+ <p>
+The first thing that needs to be done is to create a LUKS encrypted
+container in the final partition using dm-crypt.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">cryptsetup -vy luksFormat /dev/sda3
+</pre>
+</div>
+
+ <p>
+The -y option is required to verify the password. Make sure it’s a
+secure password and don’t forget it. It will be required at the start
+of every boot..
+</p>
+
+ <p>
+Next unlock the encrypted container and enter the password:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">cryptsetup open /dev/sda3 btrfsroot
+</pre>
+</div>
+
+ <p>
+Replace  <code>btrfsroot</code> with any preferred name. This will map the LUKS
+container to  <code>/dev/mapper/btrfsroot</code>.
+</p>
+
+ <p>
+Create the btrfs filesystem:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">mkfs.btrfs -L  <span style="color: #996E7A;">"arch"</span> /dev/mapper/btrfsroot
+</pre>
+</div>
+
+ <p>
+The  <code>arch</code> label will be used to mount the various Btrfs subvolumes in
+fstab. The layout should now look something like this:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">sda
+ ├─ sda1             EFI             512M
+ ├─ sda2             swap            2G
+ └─ sda3             crypto_LUKS     114G
+      └─ btrfsroot   Btrfs           114G
+</pre>
+</div>
+
+ <p>
+ <b>Note</b>: Encrypting the swap partition is outside the scope of this
+article but is possible if needed. See  <a href="https://wiki.archlinux.org/index.php/Dm-crypt/Swap_encryption">dmcrypt/Swap encryption</a>.
+</p>
+</div>
+</div>
+
+ <div id="outline-container-org3a777cb" class="outline-2">
+ <h2 id="org3a777cb">Setting up Btrfs and installing Arch Linux</h2>
+ <div class="outline-text-2" id="text-org3a777cb">
+ <p>
+Properly create and mount the subvolumes for the actual Arch Linux
+install.
+</p>
+
+ <p>
+First mount the container:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">mount /dev/mapper/btrfsroot /mnt
+ <span style="color: #f3deea; font-weight: bold;">cd</span> /mnt
+</pre>
+</div>
+
+ <p>
+Now create the subvolumes. In Btrfs these essentially replace (or
+complement) the traditional partitions scheme. The ultimate scheme is
+preferencial. This is just one example. There are an infinite number
+of ways to create and mount subvolumes.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">btrfs subvolume create __arch
+btrfs subvolume create __arch/root
+btrfs subvolume create __arch/home
+btrfs subvolume create __snapshots
+</pre>
+</div>
+
+ <p>
+There is one subvolume for the root( <code>/</code>) directory and one for the
+home( <code>/home</code>) directory. The  <code>__snapshots</code> subvolume is where the
+snapshots of the subvolumes will be stored. Snapshots can be created
+of the  <code>root</code> or  <code>home</code> subvolumes (or both by snapshotting  <code>__arch</code>) prior
+to major upgrades as a form of backup. They can also be automated via
+simple scripts.
+</p>
+
+ <p>
+View the subvolumes:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">btrfs subvolume list .
+</pre>
+</div>
+
+ <p>
+Unmount the LUKS container:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash"> <span style="color: #f3deea; font-weight: bold;">cd</span>
+umount -R /mnt
+</pre>
+</div>
+
+ <p>
+Decide where to mount the subvolumes and create the appropriate
+directories.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">mount -o  <span style="color: #996E7A;">subvol</span>=__arch/root /dev/mapper/btrfsroot /mnt
+mkdir /mnt/{home,.snapshots}
+mount -o  <span style="color: #996E7A;">subvol</span>=__arch/home /dev/mapper/btrfsroot /mnt/home
+mount -o  <span style="color: #996E7A;">subvol</span>=__snapshots /dev/mapper/btrfsroot /mnt/.snapshots
+</pre>
+</div>
+
+ <p>
+This mounts the corresponding subvolumes of the btrfsroot Btrfs
+filesystem to their appropriate locations.
+</p>
+
+ <p>
+Mount the EFI System Partition:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">mkdir /mnt/boot
+mount /dev/sda1 /mnt/boot
+</pre>
+</div>
+
+ <p>
+Select the fastest mirrors and install Arch Linux
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">pacstrap -i /mnt base base-devel btrfs-progs
+</pre>
+</div>
+
+ <p>
+The btrfs-progs package is required in order to manipulate the btrfs
+install.
+</p>
+</div>
+</div>
+
+ <div id="outline-container-org3cec7f4" class="outline-2">
+ <h2 id="org3cec7f4">Post Installation</h2>
+ <div class="outline-text-2" id="text-org3cec7f4">
+ <p>
+Generate the fstab file:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">genfstab -U /mnt > /mnt/etc/fstab
+</pre>
+</div>
+
+ <p>
+genftab doesn’t handle btrfs subvolumes gracefully so edit the
+file. The subvolume mounting should look something like this:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash"> <span style="color: #996E7A;">LABEL</span>=arch  /           btrfs   rw,relatime,space_cache, <span style="color: #996E7A;">subvol</span>=__arch/root  0   0
+ <span style="color: #996E7A;">LABEL</span>=arch  /home       btrfs   rw,relatime,space_cache, <span style="color: #996E7A;">subvol</span>=__arch/home  0   0
+ <span style="color: #996E7A;">LABEL</span>=arch  /.snapshots btrfs   rw,relatime,space_cache, <span style="color: #996E7A;">subvol</span>=__snapshots  0   0
+</pre>
+</div>
+
+ <p>
+Remove any reference to subvolid in the fstab file. It will conflict
+with snapshot recovery because snapshots have a seperate subvolume
+ID. This makes it tricky to easily recover subvolumes using older
+snapshots because the kernel will still be looking for the subvolume
+ID of the original subvolume. Subvolid can still be used but requires
+additional steps to be taken during the snapshotting and recovery
+process that can be avoided by relying specificallly on the subvolume
+name.
+</p>
+
+ <p>
+Chroot into the install:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">arch-chroot /mnt /bin/bash
+</pre>
+</div>
+
+ <p>
+Edit the  <code>/etc/mkinitcpio.conf</code> file to include the  <code>encrypt</code> HOOK before
+the filesystems hook:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash"> <span style="color: #996E7A;">HOOKS</span>= <span style="color: #996E7A;">"... encrypt ... filesystems ..."</span>
+</pre>
+</div>
+
+ <p>
+Regenerate the initramfs image with the  <code>encrypt</code> hook:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">mkinitcpio -p linux
+</pre>
+</div>
+
+ <p>
+Install the systemd-boot bootloader:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">bootctl install
+</pre>
+</div>
+
+ <p>
+This will by default install the bootloader in  <code>/boot</code>.
+</p>
+
+ <p>
+Create a file in  <code>/boot/loader/entires</code> called  <code>arch.conf</code>. Determine the
+unique UUID of the encrypted partition ( <code>/dev/sda3</code>) and of the btrfs
+LUKS container ( <code>/dev/mapper/btrfsroot</code>).
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">title   Arch Linux
+linux   /vmlinuz-linux
+initrd  /initramfs-linux.img
+options  <span style="color: #996E7A;">cryptdevice</span>= <span style="color: #996E7A;">UUID</span>=</dev/sda3 UUID>:btrfsroot  <span style="color: #996E7A;">root</span>= <span style="color: #996E7A;">UUID</span>=</dev/mapper/btrfsroot UUID>  <span style="color: #996E7A;">rootflags</span>= <span style="color: #996E7A;">subvol</span>=__arch/root rw quiet
+</pre>
+</div>
+
+ <p>
+Do not include the chevrons (<, >) in the file. Configure the rest of
+the system and reboot. Enter the password on restart that was chosen
+when creating the encrypted LUKS container.
+</p>
+</div>
+</div>
+
+ <div id="outline-container-orgd686a27" class="outline-2">
+ <h2 id="orgd686a27">Snapshots</h2>
+ <div class="outline-text-2" id="text-orgd686a27">
+ <p>
+Snapshots are straightforward in Btrfs. They act as another subvolume
+linked to the original. They take up almost no space unless changes
+are made on the original subvolume in which case they retain the files
+and hierarchy that existed at the time of the creation of the
+snapshot.
+</p>
+
+ <p>
+To create a snapshot the subvolume must be mounted.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">btrfs subvolume snapshot /home /.snapshots/home-$( <span style="color: #996E7A;">date</span>  <span style="color: #996E7A;">"+%F"</span>)
+</pre>
+</div>
+
+ <p>
+This will create a complete copy of the  <code>__arch/home</code> subvolume in
+ <code>__snapshots</code>.
+</p>
+
+ <p>
+Because snapshots act as subvolumes they can be viewed, deleted and
+mounted them the same way.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">btrfs subvolume list /
+btrfs subvolume delete /.snapshots/home-2016-01-25
+mount -o  <span style="color: #996E7A;">subvol</span>=__snapshots/home-2016-01-25 /dev/mapper/btrfsroot /mnt/home-snapshots
+</pre>
+</div>
+
+ <p>
+Snapshots and Subvolumes behave in many ways similar to directories
+and so they can be renamed using the  <code>mv</code> command.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">mv /.snapshots/home-2016-01-25 /.snapshots/home/2016-01-25
+</pre>
+</div>
+
+ <p>
+In order to rollback to a snapshot, first mount the toplevel Btrfs
+subvolume and simply replace the desired subvolume with the preferred
+snapshot.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">mkdir /mnt/btrfs-toplevel
+mount /dev/mapper/btrfsroot /mnt/btrfs-toplevel
+ <span style="color: #f3deea; font-weight: bold;">cd</span> /mnt/btrfs-toplevel
+mv __arch/home __arch/home-old
+mv __snapshots/home-2016-01-25 __arch/home
+</pre>
+</div>
+
+ <p>
+Then reboot and the kernel will mount the new  <code>__arch/home</code> subvolume
+rather than the  <code>__arch/home-old</code> because fstab determines the
+appropriate subvolume by name not ID in which case it would attempt to
+mount  <code>__arch/home-old</code> again.
+</p>
+</div>
+</div>
+</div>]]></description>
+  <link>https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/encrypted-btrfs-archlinux/index.html</link>
+  <guid isPermaLink="false">https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/encrypted-btrfs-archlinux/index.html</guid>
+  <pubDate>Thu, 16 Jan 2020 00:51:00 -0500</pubDate>
+</item>
+<item>
+  <title>Setting up LXC with Networking</title>
+  <description><![CDATA[<div id="content">
+ <h1 class="title">Setting up LXC with Networking
+ <br></br> <span class="subtitle">May 14, 2016</span>
+</h1>
+ <p>
+From my understanding Ubuntu will setup a bridge by default when you
+install lxc. Or perhaps when you first create a container. I’m not
+certain. This isn’t the case in a lot of other distributions however.
+</p>
+
+ <p>
+In this guide  we’ll setup a network bridge. The  bridge will be setup
+on the host  system to aggregate the internal  container networks with
+the outer network. In this way  the host system will become a “bridge”
+from the router to the containers.
+</p>
+
+ <p>
+First create the virtual link and bring it up.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">ip link add name {bridge_name}  <span style="color: #f3deea; font-weight: bold;">type</span> bridge
+ip link set {bridge_name} up
+</pre>
+</div>
+
+ <p>
+Add an interface (presumably the LAN interface) to the bridge.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">ip link set {interface} master {bridge_name}
+</pre>
+</div>
+
+ <p>
+Get an IP address for the bridge.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">dhcpcd {bridge_name}
+</pre>
+</div>
+
+ <p>
+Confirm that the host has a proper connection.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">ping -c 1 www.bassamsaeed.ca
+</pre>
+</div>
+
+ <p>
+If everything is working then the bridge is working perfectly. The
+next step is to properly set up the containers to use the bridge.
+</p>
+
+ <p>
+First create the container. Use any preferred template.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">lxc-create -n {lxc_name} -t debian
+</pre>
+</div>
+
+ <p>
+Edit the config file of the container. This is usually located at
+ <code>/var/lib/lxc/{lxc_name}/config</code>. Add the following two lines:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash"> <span style="color: #605E91;">## </span> <span style="color: #605E91;">network</span>
+lxc.network.type = veth
+lxc.network.link = {bridge_name}
+</pre>
+</div>
+
+ <p>
+This will create an virtual ethernet interface and link it with the
+bridge.
+</p>
+
+ <p>
+The guest container is now bridged with the network. DHCP may be
+configured in the guest container. Static IP may also be configured in
+the actual container or in the container config file as follows:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">lxc.network.ipv4 = 192.168.1.100/24
+lxc.network.ipv4.gateway = 192.168.1.1
+</pre>
+</div>
+</div>]]></description>
+  <link>https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/lxc-container-networking/index.html</link>
+  <guid isPermaLink="false">https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/lxc-container-networking/index.html</guid>
+  <pubDate>Thu, 16 Jan 2020 00:51:00 -0500</pubDate>
+</item>
+<item>
+  <title>The Devil is in the Email, Mutt Guide Pt. 1</title>
+  <description><![CDATA[<div id="content">
+ <h1 class="title">The Devil is in the Email, Mutt Guide Pt. 1
+ <br></br> <span class="subtitle">Jun 14, 2018</span>
+</h1>
+ <p>
+I’ve had many false starts with Mutt. It’s probably the piece of
+software I’ve had the most trouble getting into. Yes, more than Vim or
+Emacs. It’s not even Mutt’s fault really, I think the main culprit is
+that I always followed the examples and guides of people heavily
+focused on setting up an incredibly robust system with separate IMAP
+and SMTP setups. Some even add on custom filtering and tagging. It
+doesn’t help that many of these guides operate under the guise of a
+beginner’s guide.
+</p>
+
+ <p>
+I don’t want to sound like I’m condemning these excellent
+resources. There is nothing wrong with such a robust setup. It is
+after all the setup I wanted and one I eventually achieved after weeks
+of tinkering. Most of my problems getting started with Mutt are
+probably my own fault. The  <a href="https://wiki.archlinux.org/index.php/Mutt">ArchWiki</a> has an excellent starters guide
+but I’m probably too ambitious and jumped right ahead into trying to
+setup the fully featured, robust setup of my dreams and consequently
+would get a little confused and disheartened.
+</p>
+
+ <p>
+In this article I’ll be going through my personal journey setting up
+Mutt to meet my needs and explain my reasoning behind why I did
+certain things the way I did.
+</p>
+
+ <div id="table-of-contents">
+ <h2>Table of Contents</h2>
+ <div id="text-table-of-contents">
+ <ul> <li> <a href="#orgedd1c02">I Started out with Nothing, and I Still Got Most of It Left</a></li>
+ <li> <a href="#orge9c14be">The Beginnings</a></li>
+ <li> <a href="#org7ad56b8">Growing Pains</a></li>
+ <li> <a href="#org431fb68">Unholy Emails</a></li>
+ <li> <a href="#orgb5836f5">Persistent Mutt</a></li>
+ <li> <a href="#org21bacab">Good to Go</a></li>
+</ul></div>
+</div>
+
+ <div id="outline-container-orgedd1c02" class="outline-2">
+ <h2 id="orgedd1c02">I Started out with Nothing, and I Still Got Most of It Left</h2>
+ <div class="outline-text-2" id="text-orgedd1c02">
+ <p>
+My initial setup is one where Mutt handles (to the best of its
+capabilities) everything I need. The robust setup with separate
+external IMAP, SMTP and tagging capabilities as well as a local copy
+of all my mail will come later. Got to start small.
+</p>
+</div>
+</div>
+
+ <div id="outline-container-orge9c14be" class="outline-2">
+ <h2 id="orge9c14be">The Beginnings</h2>
+ <div class="outline-text-2" id="text-orge9c14be">
+ <p>
+After having not touched Mutt for almost a year, this  <a href="https://www.reddit.com/r/commandline/comments/625i2r/">reddit post</a> got
+me interested in trying Mutt again and building my own solution piece
+by piece just like I did in Vim. So I modified it slightly and this is
+what I started with in my  <code>$HOME/.mutt/muttrc</code>:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash"> <span style="color: #f3deea; font-weight: bold;">set</span> folder =  <span style="color: #996E7A;">"imaps://imap.gmail.com"</span>
+
+ <span style="color: #f3deea; font-weight: bold;">set</span> imap_user =  <span style="color: #996E7A;">"bassam.saeed@gmail.com"</span>
+ <span style="color: #f3deea; font-weight: bold;">set</span> imap_pass =  <span style="color: #996E7A;">`pass mail/gmail/mutt`</span>
+
+ <span style="color: #f3deea; font-weight: bold;">set</span> smtp_url  =  <span style="color: #996E7A;">"smtps://bassam.saeed@gmail.com@smtp.gmail.com"</span>
+ <span style="color: #f3deea; font-weight: bold;">set</span> smtp_pass =  <span style="color: #996E7A;">`pass mail/gmail/mutt`</span>
+
+ <span style="color: #f3deea; font-weight: bold;">set</span> realname  =  <span style="color: #996E7A;">"Bassam Saeed"</span>
+ <span style="color: #f3deea; font-weight: bold;">set</span> from      =  <span style="color: #996E7A;">"bassam.saeed@gmail.com"</span>
+
+ <span style="color: #f3deea; font-weight: bold;">set</span> header_cache     =  <span style="color: #996E7A;">"~/.mutt/cache/headers"</span>
+ <span style="color: #f3deea; font-weight: bold;">set</span> message_cachedir =  <span style="color: #996E7A;">"~/.mutt/cache/bodies"</span>
+
+ <span style="color: #f3deea; font-weight: bold;">set</span> spoolfile =  <span style="color: #996E7A;">"+INBOX"</span>
+ <span style="color: #f3deea; font-weight: bold;">set</span> postponed =  <span style="color: #996E7A;">"+[Gmail]/Drafts"</span>
+ <span style="color: #f3deea; font-weight: bold;">set</span> trash     =  <span style="color: #996E7A;">"+[Gmail]/Trash"</span>
+</pre>
+</div>
+
+ <p>
+This is a bare bones configuration but it should be enough to get most
+people at least started with Mutt.
+</p>
+
+ <p>
+Most of this should be fairly self-explanatory. The  <code>folder</code> setting
+defines the default location of the mailbox. Because I’m not keeping a
+complete copy of all my mail locally, the setting is set to just use
+the Gmail IMAP server. The header and message caches are there so I
+don’t have to re-download them every time I start up Mutt. I consider
+the header cache pretty mandatory but some people may not need the
+message cache. The  <code>spoolfile</code> is where unfiltered email arrives. In
+Gmail (and most email providers) this is known as the INBOX so you can
+define that relative to the default mailbox by putting a  <code>+</code> in
+front. The  <code>postponed</code> and  <code>trash</code> settings are defined under
+[Gmail]. Other email providers will have it somewhere else.
+</p>
+
+ <p>
+I use the excellent  <a href="https://www.passwordstore.org/">pass</a> utility as my password manager and so I allow
+Mutt to run this command for IMAP and SMTP authentication by using
+grave accents (backticks) to query  <code>pass</code> for the Gmail password.
+</p>
+
+ <p>
+Note: I have two-factor authentication enabled for my Google accounts
+and so I needed to create a separate  <a href="https://support.google.com/accounts/answer/185833?hl=en">App Password</a> for use with Mutt.
+</p>
+</div>
+</div>
+
+ <div id="outline-container-org7ad56b8" class="outline-2">
+ <h2 id="org7ad56b8">Growing Pains</h2>
+ <div class="outline-text-2" id="text-org7ad56b8">
+ <p>
+There are a couple of things I realized quickly were less than ideal
+with my initial setup. In fact within a couple of minutes I had added
+the following setting:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash"> <span style="color: #f3deea; font-weight: bold;">set</span> sort = reverse-date-received
+</pre>
+</div>
+
+ <p>
+For better or worse I’ve spent my whole life using email clients where
+the newest email (received or sent) was at the top of the list. Mutt’s
+default of it being on the bottom is completely anathema to me. So I
+changed it almost immediately.
+</p>
+
+ <p>
+My primary Gmail account is linked with multiple other Gmail
+accounts. So I needed a way to choose which account I was sending mail
+as:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash"> <span style="color: #f3deea; font-weight: bold;">set</span> edit_headers = yes
+</pre>
+</div>
+</div>
+</div>
+
+ <div id="outline-container-org431fb68" class="outline-2">
+ <h2 id="org431fb68">Unholy Emails</h2>
+ <div class="outline-text-2" id="text-org431fb68">
+ <p>
+Unfortunately in the world we live in, people love to send html
+emails. Some will by courteous enough to include a plain text version
+but many wont. The good news is that there are a decent number of
+command-line browsers that can convert html to plain text within Mutt
+itself.
+</p>
+
+ <p>
+First you have to define which browser to use in the  <code>mailcap</code> file. By
+default Mutt looks in  <code>$HOME/.mailcap</code> for this file but I prefer
+keeping everything in the  <code>$HOME/.mutt</code> directory so I changed the
+default mailcap path.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash"> <span style="color: #f3deea; font-weight: bold;">set</span> mailcap_path =  <span style="color: #996E7A;">"~/.mutt/mailcap"</span>
+</pre>
+</div>
+
+ <p>
+For my browser I settled on  <a href="http://elinks.or.cz/">elinks</a> but most console browsers should
+work just fine.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">text/html; elinks -dump; copiousoutput
+</pre>
+</div>
+
+ <p>
+The  <code>copiousoutput</code> tells Mutt to we’re potentially passing large
+amounts of text and so Mutt invokes a pager. By default this is Mutt’s
+internal pager but you can define an external one using the  <code>pager</code>
+setting in your  <code>muttrc</code>.
+</p>
+
+ <p>
+Now I tell Mutt how to actually handle these files by putting the
+following in my  <code>muttrc</code>.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">alternative_order text/plain text/html
+auto_view text/html
+</pre>
+</div>
+
+ <p>
+ <code>alternative_order</code> prioritizes the plain text version of an email (if
+it exists) over it’s html variant. If it doesn’t exist, it’ll display
+the html version. However by default Mutt doesn’t automatically
+display any non plain text email. You have to invoke that manually, or
+just add the  <code>auto_view</code> setting.
+</p>
+
+ <p>
+That’s all well and good but what about all the fancy html and styling
+that elinks just can’t render? There are going to be images and fancy
+formatting that I might want to view. In that case I have to resort to
+good old Firefox and put the following in my  <code>mailcap</code>.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">text/html; firefox %s;
+</pre>
+</div>
+
+ <p>
+It’s important to put that entry above all other  <code>text/html</code>
+entires. That way Mutt will default to Firefox when manually
+evoked. Now I can easily open up an email in a Firefox tab by pressing
+ <code>v</code> to view the attachments and  <code>m</code> on the appropriate  <code>text/html</code>
+attachment I want to view in Firefox.
+</p>
+</div>
+</div>
+
+ <div id="outline-container-orgb5836f5" class="outline-2">
+ <h2 id="orgb5836f5">Persistent Mutt</h2>
+ <div class="outline-text-2" id="text-orgb5836f5">
+ <p>
+Initially I would launch Mutt, let it retrieve any new emails and then
+close Mutt when I was done with it. As time went on I found I just
+kept Mutt open in a terminal constantly. Unfortunately Mutt doesn’t
+automatically retireve emails by default. You have to manually sync
+with the server using  <code>$</code>. This is easily remedied by adding a simple
+setting to my  <code>muttrc</code>.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash"> <span style="color: #f3deea; font-weight: bold;">set</span> imap_check_subscribed
+</pre>
+</div>
+
+ <p>
+By default, Gmail will have a list of folders. These are all defined
+in the Labels tab of Gmail’s settings. There’s a handful of default
+ones (some we’ve already seen like Trash, Sent, and INBOX) and any
+custom ones we can define. The  <code>imap_check_subscribed</code> setting adds all
+these to the  <code>mailboxes</code> list which are then automatically polled for
+new mail. I want to query everything for new mail but if I wanted to
+query only specific folders I could get rid of the
+ <code>imap_check_subscribed</code> setting and add the individual folders to the
+ <code>mailboxes</code> list like this:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">mailboxes +INBOX +friends +work
+</pre>
+</div>
+
+ <p>
+There is a setting called  <code>mailcheck</code> that determines how often Mutt
+checks the  <code>mailboxes</code> for new mail. The default is 5 seconds which in
+my opinion is unnecessary for most people. I changed it to 120 seconds
+(or 2 minutes) for my needs.
+</p>
+
+ <p>
+There are a few other settings that worthwhile to look into.  <code>timeout</code>,
+ <code>imap_keepalive</code>, and  <code>imap_passive</code>.
+</p>
+</div>
+</div>
+
+ <div id="outline-container-org21bacab" class="outline-2">
+ <h2 id="org21bacab">Good to Go</h2>
+ <div class="outline-text-2" id="text-org21bacab">
+ <p>
+At this point we have a configuration that I would consider acceptable
+for everyday use. Here’s what mine looked like exactly.
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash"> <span style="color: #605E91;">## </span> <span style="color: #605E91;">IMAP</span>
+ <span style="color: #f3deea; font-weight: bold;">set</span> folder =  <span style="color: #996E7A;">"imaps://imap.gmail.com"</span>
+
+ <span style="color: #f3deea; font-weight: bold;">set</span> imap_user =  <span style="color: #996E7A;">"bassam.saeed@gmail.com"</span>
+ <span style="color: #f3deea; font-weight: bold;">set</span> imap_pass =  <span style="color: #996E7A;">`pass mail/gmail/mutt`</span>
+
+ <span style="color: #f3deea; font-weight: bold;">set</span>   imap_check_subscribed
+ <span style="color: #f3deea; font-weight: bold;">unset</span> imap_passive
+ <span style="color: #f3deea; font-weight: bold;">set</span>   mail_check = 120
+
+ <span style="color: #605E91;">## </span> <span style="color: #605E91;">SMTP</span>
+ <span style="color: #f3deea; font-weight: bold;">set</span> smtp_url  =  <span style="color: #996E7A;">"smtps://bassam.saeed@gmail.com@smtp.gmail.com"</span>
+ <span style="color: #f3deea; font-weight: bold;">set</span> smtp_pass =  <span style="color: #996E7A;">`pass mail/gmail/mutt`</span>
+
+ <span style="color: #f3deea; font-weight: bold;">set</span> realname  =  <span style="color: #996E7A;">"Bassam Saeed"</span>
+ <span style="color: #f3deea; font-weight: bold;">set</span> from      =  <span style="color: #996E7A;">"bassam.saeed@gmail.com"</span>
+
+ <span style="color: #f3deea; font-weight: bold;">set</span> edit_headers = yes
+
+ <span style="color: #605E91;">## </span> <span style="color: #605E91;">LOCATIONS</span>
+ <span style="color: #f3deea; font-weight: bold;">set</span> header_cache     =  <span style="color: #996E7A;">"~/.mutt/cache/headers"</span>
+ <span style="color: #f3deea; font-weight: bold;">set</span> message_cachedir =  <span style="color: #996E7A;">"~/.mutt/cache/bodies"</span>
+ <span style="color: #f3deea; font-weight: bold;">set</span> mailcap_path     =  <span style="color: #996E7A;">"~/.mutt/mailcap"</span>
+
+ <span style="color: #605E91;">## </span> <span style="color: #605E91;">FOLDERS</span>
+ <span style="color: #f3deea; font-weight: bold;">set</span> spoolfile =  <span style="color: #996E7A;">"+INBOX"</span>
+ <span style="color: #f3deea; font-weight: bold;">set</span> postponed =  <span style="color: #996E7A;">"+[Gmail]/Drafts"</span>
+ <span style="color: #f3deea; font-weight: bold;">set</span> trash     =  <span style="color: #996E7A;">"+[Gmail]/Trash"</span>
+
+ <span style="color: #605E91;">## </span> <span style="color: #605E91;">UI</span>
+alternative_order text/plain text/html
+auto_view text/html
+
+ <span style="color: #f3deea; font-weight: bold;">set</span> sort = reverse-date-received
+</pre>
+</div>
+
+ <p>
+I am currently working on part two, hopefully it’ll be up soon.
+</p>
+</div>
+</div>
+</div>]]></description>
+  <link>https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/mutt-guide-1/index.html</link>
+  <guid isPermaLink="false">https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/mutt-guide-1/index.html</guid>
+  <pubDate>Thu, 16 Jan 2020 00:51:00 -0500</pubDate>
+</item>
+<item>
+  <title>Starting Up With Jekyll and Github</title>
+  <description><![CDATA[<div id="content">
+ <h1 class="title">Starting Up With Jekyll and Github
+ <br></br> <span class="subtitle">Oct 26, 2015</span>
+</h1>
+ <p>
+I’ve decided to actually create a website in order to document my
+learning as well as interesting information or methodology I stumble
+across. Essentially a way for me to keep track of certain details that
+I might need to refer back to. Maybe it’ll be helpful for others too.
+</p>
+
+ <p>
+Up to this point I’ve used a self-hosted wiki to manage this type of
+information (as well as cooking recipes). This blog is meant to be
+essentially an extension of that with more detail and my thought
+process and reasoning behind the decisions I make. Over time I’ll
+probably transfer some information from the wiki over to here in a
+nicer format.
+</p>
+
+ <div id="outline-container-orgf9c8f12" class="outline-2">
+ <h2 id="orgf9c8f12">Journey to Jekyll</h2>
+ <div class="outline-text-2" id="text-orgf9c8f12">
+ <p>
+Static site generators had always interested me. I’d had enough
+experience with overwrought dynamic CMSs to be a little tired of
+them. I really don’t see the need for them for my small little
+website. I also generally like to be as close as possible to the
+actual code as I can. Abstractions on top of abstractions get a little
+tedious for me.
+</p>
+
+ <p>
+This isn’t my first time experimenting with static site generators. I
+actually built one myself for a client’s website a few years ago. It
+was more of a programming project than an attempt at a viable,
+commercial generator. I used Python for the actual generator while
+making use of the Jinja2 template engine. Honestly I was pretty proud
+of it. Especially for what amounted to a weekends worth of work.
+</p>
+
+ <p>
+A few days ago when I actually decided to set up this website I
+considered using my own generator for this site. But I quickly
+realized that it would need quite a bit of work to function as an
+actual blog generator. And among the publicly available generators,
+Jekyll was used automatically by Github Pages (which this site is
+hosted on). Hence my decision. It doesn’t hurt that Jekyll is the most
+popular and so there’s a lot of resources available for it. Finally, I
+have zero experience with Ruby so it might be a nice learning tool if
+I ever end up going into the nitty-gritty of Jekyll.
+</p>
+</div>
+</div>
+
+ <div id="outline-container-orgf1da0ea" class="outline-2">
+ <h2 id="orgf1da0ea">Setting up Github Pages and initializing Jekyll</h2>
+ <div class="outline-text-2" id="text-orgf1da0ea">
+ <p>
+Creating a Github site for myself was fairly straightforward. A simple
+repository with a CNAME Record file that let’s Github know my custom
+domain. And finally a few A Records with my domain pointed to
+Github. It’s incredibly simple and straightforward.
+</p>
+
+ <p>
+Setting up Ruby on my computer was an interesting experience. I
+recently got a Macbook Pro which would be my first experience with OS
+X since a Grade 10 Communications course. So I figured I’d set it up
+first on the Macbook rather than my Linux box. The first thing
+everyone seems to recommend is to install Homebrew, the presumably
+best package manager on OS X. From there it’s on to setting up Ruby.
+</p>
+
+ <p>
+There’s a lot of different ways of setting up Ruby installs it
+seems. My version of OS X came with Ruby 2.0.0 pre-installed but I
+wanted the latest stable which, at the time of writing, was
+2.2.3. There’s a multitude of ways to accomplish this but I settled on
+using ruby-install for the actual installation and chruby to manage
+the various Ruby installs.
+</p>
+
+ <p>
+The next step was configuring my Ruby environment. Bundler is helpful
+in this because it ensures all the Ruby gems match the correct version
+needed. All I had to do was create a simply Gemfile file with the
+names of all the gems I wanted (and their specific versions if
+needed). In my case the only gem I needed was Jekyll.
+</p>
+
+ <p>
+I forwent using the github-pages gem in favour of setting up my Jekyll
+system myself. After Bundler installed Jekyll, all I had to do was run
+ <code>jekyll new .</code> in my repository. Jekyll then built the entire framework
+which I haven’t touched at all so far. The only change will be this
+post.
+</p>
+</div>
+</div>
+
+ <div id="outline-container-orge5e8dd9" class="outline-2">
+ <h2 id="orge5e8dd9">To Infinity</h2>
+ <div class="outline-text-2" id="text-orge5e8dd9">
+ <p>
+Going forward I’m going to keep this website incredibly
+simple. There’s going to be a design change from this default Jekyll
+skin but I doubt I’ll be doing anything truly fancy. I generally
+prefer a minimalistic style but we’ll see if I’ll build something a
+little more complex than Richard Stallman’s website.
+</p>
+
+ <p>
+Hopefully this’ll be fun.
+</p>
+
+ <p>
+Or at least interesting.
+</p>
+</div>
+</div>
+</div>]]></description>
+  <link>https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/starting-up/index.html</link>
+  <guid isPermaLink="false">https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/starting-up/index.html</guid>
+  <pubDate>Thu, 16 Jan 2020 00:51:00 -0500</pubDate>
+</item>
+<item>
+  <title>Posts</title>
+  <description><![CDATA[<div id="content">
+ <h1 class="title">Posts
+ <br></br> <span class="subtitle">Jan 16, 2020</span>
+</h1>
+ <ul class="org-ul"> <li>Jun 14, 2018  <i> <a href="mutt-guide-1/">The Devil is in the Email</a></i></li>
+ <li>May 14, 2016  <i> <a href="lxc-container-networking/">Setting up LXC with Networking</a></i></li>
+ <li>Jan 25, 2016  <i> <a href="encrypted-btrfs-archlinux/">How-To: Encrypted Btrfs install on Arch Linux</a></i></li>
+ <li>Oct 26, 2015  <i> <a href="starting-up/">Starting Up With Jekyll and Github</a></i></li>
+</ul></div>]]></description>
+  <link>https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/index.html</link>
+  <guid isPermaLink="false">https://bassamsaeed.ca//home/bassam/src/bassamsaeed.ca/public/posts/index.html</guid>
+  <pubDate>Thu, 16 Jan 2020 00:51:00 -0500</pubDate>
+</item>
+</channel>
+</rss>
