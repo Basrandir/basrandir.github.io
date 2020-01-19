@@ -2,27 +2,12 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
 <author><name>Bassam Saeed</name></author>
-<title>Bassam Saeed's Dev Blog</title>
-<description>Personal Dev Blog</description>
+<title>Bassam Saeed's Blog</title>
+<description>Personal Development Blog</description>
 <generator>Emacs webfeeder.el</generator>
 <link>https://www.bassamsaeed.ca</link>
 <atom:link href="https://www.bassamsaeed.ca/posts.xml" rel="self" type="application/rss+xml"/>
-<lastBuildDate>Sun, 19 Jan 2020 02:16:00 -0500</lastBuildDate>
-<item>
-  <title>Posts</title>
-  <description><![CDATA[<div id="content">
- <h1 class="title">Posts
- <br></br> <span class="subtitle">Jan 16, 2020</span>
-</h1>
- <ul class="org-ul"> <li>Jun 14, 2018  <i> <a href="mutt-guide-1/">The Devil is in the Email</a></i></li>
- <li>May 14, 2016  <i> <a href="lxc-container-networking/">Setting up LXC with Networking</a></i></li>
- <li>Jan 25, 2016  <i> <a href="encrypted-btrfs-archlinux/">How-To: Encrypted Btrfs install on Arch Linux</a></i></li>
- <li>Oct 26, 2015  <i> <a href="starting-up/">Starting Up With Jekyll and Github</a></i></li>
-</ul></div>]]></description>
-  <link>https://www.bassamsaeed.ca/posts/index.html</link>
-  <guid isPermaLink="false">https://www.bassamsaeed.ca/posts/index.html</guid>
-  <pubDate>Thu, 16 Jan 2020 00:51:00 -0500</pubDate>
-</item>
+<lastBuildDate>Sun, 19 Jan 2020 02:25:12 -0500</lastBuildDate>
 <item>
   <title>The Devil is in the Email, Mutt Guide Pt. 1</title>
   <description><![CDATA[<div id="content">
