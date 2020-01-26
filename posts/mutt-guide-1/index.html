@@ -8,6 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>The Devil is in the Email, Mutt Guide Pt. 1</title>
 <meta name="generator" content="Org mode" />
+<meta name="author" content="Bassam Saeed" />
 <link rel="stylesheet" type="text/css" href="/css/main.css">
 <link rel="alternate" type="application/rss+xml" href="/posts.rss">
 <link rel="alternate" type="application/atom+xml" href="/posts.atom">
@@ -61,19 +62,19 @@ certain things the way I did.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgedd1c02">I Started out with Nothing, and I Still Got Most of It Left</a></li>
-<li><a href="#orge9c14be">The Beginnings</a></li>
-<li><a href="#org7ad56b8">Growing Pains</a></li>
-<li><a href="#org431fb68">Unholy Emails</a></li>
-<li><a href="#orgb5836f5">Persistent Mutt</a></li>
-<li><a href="#org21bacab">Good to Go</a></li>
+<li><a href="#org85ec667">I Started out with Nothing, and I Still Got Most of It Left</a></li>
+<li><a href="#org07f21ae">The Beginnings</a></li>
+<li><a href="#orge3cd842">Growing Pains</a></li>
+<li><a href="#org4fc3320">Unholy Emails</a></li>
+<li><a href="#orga5df428">Persistent Mutt</a></li>
+<li><a href="#org5e13120">Good to Go</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgedd1c02" class="outline-2">
-<h2 id="orgedd1c02">I Started out with Nothing, and I Still Got Most of It Left</h2>
-<div class="outline-text-2" id="text-orgedd1c02">
+<div id="outline-container-org85ec667" class="outline-2">
+<h2 id="org85ec667">I Started out with Nothing, and I Still Got Most of It Left</h2>
+<div class="outline-text-2" id="text-org85ec667">
 <p>
 My initial setup is one where Mutt handles (to the best of its
 capabilities) everything I need. The robust setup with separate
@@ -83,9 +84,9 @@ of all my mail will come later. Got to start small.
 </div>
 </div>
 
-<div id="outline-container-orge9c14be" class="outline-2">
-<h2 id="orge9c14be">The Beginnings</h2>
-<div class="outline-text-2" id="text-orge9c14be">
+<div id="outline-container-org07f21ae" class="outline-2">
+<h2 id="org07f21ae">The Beginnings</h2>
+<div class="outline-text-2" id="text-org07f21ae">
 <p>
 After having not touched Mutt for almost a year, this <a href="https://www.reddit.com/r/commandline/comments/625i2r/">reddit post</a> got
 me interested in trying Mutt again and building my own solution piece
@@ -94,23 +95,23 @@ what I started with in my <code>$HOME/.mutt/muttrc</code>:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash"><span style="color: #f3deea; font-weight: bold;">set</span> folder = <span style="color: #996E7A;">"imaps://imap.gmail.com"</span>
+<pre class="src src-bash"><span style="color: #ffb86c;">set</span> folder = <span style="color: #f1fa8c;">"imaps://imap.gmail.com"</span>
 
-<span style="color: #f3deea; font-weight: bold;">set</span> imap_user = <span style="color: #996E7A;">"bassam.saeed@gmail.com"</span>
-<span style="color: #f3deea; font-weight: bold;">set</span> imap_pass = <span style="color: #996E7A;">`pass mail/gmail/mutt`</span>
+<span style="color: #ffb86c;">set</span> imap_user = <span style="color: #f1fa8c;">"bassam.saeed@gmail.com"</span>
+<span style="color: #ffb86c;">set</span> imap_pass = <span style="color: #fa8072;">`pass mail/gmail/mutt`</span>
 
-<span style="color: #f3deea; font-weight: bold;">set</span> smtp_url  = <span style="color: #996E7A;">"smtps://bassam.saeed@gmail.com@smtp.gmail.com"</span>
-<span style="color: #f3deea; font-weight: bold;">set</span> smtp_pass = <span style="color: #996E7A;">`pass mail/gmail/mutt`</span>
+<span style="color: #ffb86c;">set</span> smtp_url  = <span style="color: #f1fa8c;">"smtps://bassam.saeed@gmail.com@smtp.gmail.com"</span>
+<span style="color: #ffb86c;">set</span> smtp_pass = <span style="color: #fa8072;">`pass mail/gmail/mutt`</span>
 
-<span style="color: #f3deea; font-weight: bold;">set</span> realname  = <span style="color: #996E7A;">"Bassam Saeed"</span>
-<span style="color: #f3deea; font-weight: bold;">set</span> from      = <span style="color: #996E7A;">"bassam.saeed@gmail.com"</span>
+<span style="color: #ffb86c;">set</span> realname  = <span style="color: #f1fa8c;">"Bassam Saeed"</span>
+<span style="color: #ffb86c;">set</span> from      = <span style="color: #f1fa8c;">"bassam.saeed@gmail.com"</span>
 
-<span style="color: #f3deea; font-weight: bold;">set</span> header_cache     = <span style="color: #996E7A;">"~/.mutt/cache/headers"</span>
-<span style="color: #f3deea; font-weight: bold;">set</span> message_cachedir = <span style="color: #996E7A;">"~/.mutt/cache/bodies"</span>
+<span style="color: #ffb86c;">set</span> header_cache     = <span style="color: #f1fa8c;">"~/.mutt/cache/headers"</span>
+<span style="color: #ffb86c;">set</span> message_cachedir = <span style="color: #f1fa8c;">"~/.mutt/cache/bodies"</span>
 
-<span style="color: #f3deea; font-weight: bold;">set</span> spoolfile = <span style="color: #996E7A;">"+INBOX"</span>
-<span style="color: #f3deea; font-weight: bold;">set</span> postponed = <span style="color: #996E7A;">"+[Gmail]/Drafts"</span>
-<span style="color: #f3deea; font-weight: bold;">set</span> trash     = <span style="color: #996E7A;">"+[Gmail]/Trash"</span>
+<span style="color: #ffb86c;">set</span> spoolfile = <span style="color: #f1fa8c;">"+INBOX"</span>
+<span style="color: #ffb86c;">set</span> postponed = <span style="color: #f1fa8c;">"+[Gmail]/Drafts"</span>
+<span style="color: #ffb86c;">set</span> trash     = <span style="color: #f1fa8c;">"+[Gmail]/Trash"</span>
 </pre>
 </div>
 
@@ -146,9 +147,9 @@ and so I needed to create a separate <a href="https://support.google.com/account
 </div>
 </div>
 
-<div id="outline-container-org7ad56b8" class="outline-2">
-<h2 id="org7ad56b8">Growing Pains</h2>
-<div class="outline-text-2" id="text-org7ad56b8">
+<div id="outline-container-orge3cd842" class="outline-2">
+<h2 id="orge3cd842">Growing Pains</h2>
+<div class="outline-text-2" id="text-orge3cd842">
 <p>
 There are a couple of things I realized quickly were less than ideal
 with my initial setup. In fact within a couple of minutes I had added
@@ -156,7 +157,7 @@ the following setting:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash"><span style="color: #f3deea; font-weight: bold;">set</span> sort = reverse-date-received
+<pre class="src src-bash"><span style="color: #ffb86c;">set</span> sort = reverse-date-received
 </pre>
 </div>
 
@@ -174,15 +175,15 @@ as:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash"><span style="color: #f3deea; font-weight: bold;">set</span> edit_headers = yes
+<pre class="src src-bash"><span style="color: #ffb86c;">set</span> edit_headers = yes
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org431fb68" class="outline-2">
-<h2 id="org431fb68">Unholy Emails</h2>
-<div class="outline-text-2" id="text-org431fb68">
+<div id="outline-container-org4fc3320" class="outline-2">
+<h2 id="org4fc3320">Unholy Emails</h2>
+<div class="outline-text-2" id="text-org4fc3320">
 <p>
 Unfortunately in the world we live in, people love to send html
 emails. Some will by courteous enough to include a plain text version
@@ -199,7 +200,7 @@ default mailcap path.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash"><span style="color: #f3deea; font-weight: bold;">set</span> mailcap_path = <span style="color: #996E7A;">"~/.mutt/mailcap"</span>
+<pre class="src src-bash"><span style="color: #ffb86c;">set</span> mailcap_path = <span style="color: #f1fa8c;">"~/.mutt/mailcap"</span>
 </pre>
 </div>
 
@@ -261,9 +262,9 @@ attachment I want to view in Firefox.
 </div>
 </div>
 
-<div id="outline-container-orgb5836f5" class="outline-2">
-<h2 id="orgb5836f5">Persistent Mutt</h2>
-<div class="outline-text-2" id="text-orgb5836f5">
+<div id="outline-container-orga5df428" class="outline-2">
+<h2 id="orga5df428">Persistent Mutt</h2>
+<div class="outline-text-2" id="text-orga5df428">
 <p>
 Initially I would launch Mutt, let it retrieve any new emails and then
 close Mutt when I was done with it. As time went on I found I just
@@ -274,7 +275,7 @@ setting to my <code>muttrc</code>.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash"><span style="color: #f3deea; font-weight: bold;">set</span> imap_check_subscribed
+<pre class="src src-bash"><span style="color: #ffb86c;">set</span> imap_check_subscribed
 </pre>
 </div>
 
@@ -309,49 +310,49 @@ There are a few other settings that worthwhile to look into. <code>timeout</code
 </div>
 </div>
 
-<div id="outline-container-org21bacab" class="outline-2">
-<h2 id="org21bacab">Good to Go</h2>
-<div class="outline-text-2" id="text-org21bacab">
+<div id="outline-container-org5e13120" class="outline-2">
+<h2 id="org5e13120">Good to Go</h2>
+<div class="outline-text-2" id="text-org5e13120">
 <p>
 At this point we have a configuration that I would consider acceptable
 for everyday use. Here’s what mine looked like exactly.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash"><span style="color: #605E91;">## </span><span style="color: #605E91;">IMAP</span>
-<span style="color: #f3deea; font-weight: bold;">set</span> folder = <span style="color: #996E7A;">"imaps://imap.gmail.com"</span>
+<pre class="src src-bash"><span style="color: #6272a4;">## </span><span style="color: #6272a4;">IMAP</span>
+<span style="color: #ffb86c;">set</span> folder = <span style="color: #f1fa8c;">"imaps://imap.gmail.com"</span>
 
-<span style="color: #f3deea; font-weight: bold;">set</span> imap_user = <span style="color: #996E7A;">"bassam.saeed@gmail.com"</span>
-<span style="color: #f3deea; font-weight: bold;">set</span> imap_pass = <span style="color: #996E7A;">`pass mail/gmail/mutt`</span>
+<span style="color: #ffb86c;">set</span> imap_user = <span style="color: #f1fa8c;">"bassam.saeed@gmail.com"</span>
+<span style="color: #ffb86c;">set</span> imap_pass = <span style="color: #fa8072;">`pass mail/gmail/mutt`</span>
 
-<span style="color: #f3deea; font-weight: bold;">set</span>   imap_check_subscribed
-<span style="color: #f3deea; font-weight: bold;">unset</span> imap_passive
-<span style="color: #f3deea; font-weight: bold;">set</span>   mail_check = 120
+<span style="color: #ffb86c;">set</span>   imap_check_subscribed
+<span style="color: #ffb86c;">unset</span> imap_passive
+<span style="color: #ffb86c;">set</span>   mail_check = 120
 
-<span style="color: #605E91;">## </span><span style="color: #605E91;">SMTP</span>
-<span style="color: #f3deea; font-weight: bold;">set</span> smtp_url  = <span style="color: #996E7A;">"smtps://bassam.saeed@gmail.com@smtp.gmail.com"</span>
-<span style="color: #f3deea; font-weight: bold;">set</span> smtp_pass = <span style="color: #996E7A;">`pass mail/gmail/mutt`</span>
+<span style="color: #6272a4;">## </span><span style="color: #6272a4;">SMTP</span>
+<span style="color: #ffb86c;">set</span> smtp_url  = <span style="color: #f1fa8c;">"smtps://bassam.saeed@gmail.com@smtp.gmail.com"</span>
+<span style="color: #ffb86c;">set</span> smtp_pass = <span style="color: #fa8072;">`pass mail/gmail/mutt`</span>
 
-<span style="color: #f3deea; font-weight: bold;">set</span> realname  = <span style="color: #996E7A;">"Bassam Saeed"</span>
-<span style="color: #f3deea; font-weight: bold;">set</span> from      = <span style="color: #996E7A;">"bassam.saeed@gmail.com"</span>
+<span style="color: #ffb86c;">set</span> realname  = <span style="color: #f1fa8c;">"Bassam Saeed"</span>
+<span style="color: #ffb86c;">set</span> from      = <span style="color: #f1fa8c;">"bassam.saeed@gmail.com"</span>
 
-<span style="color: #f3deea; font-weight: bold;">set</span> edit_headers = yes
+<span style="color: #ffb86c;">set</span> edit_headers = yes
 
-<span style="color: #605E91;">## </span><span style="color: #605E91;">LOCATIONS</span>
-<span style="color: #f3deea; font-weight: bold;">set</span> header_cache     = <span style="color: #996E7A;">"~/.mutt/cache/headers"</span>
-<span style="color: #f3deea; font-weight: bold;">set</span> message_cachedir = <span style="color: #996E7A;">"~/.mutt/cache/bodies"</span>
-<span style="color: #f3deea; font-weight: bold;">set</span> mailcap_path     = <span style="color: #996E7A;">"~/.mutt/mailcap"</span>
+<span style="color: #6272a4;">## </span><span style="color: #6272a4;">LOCATIONS</span>
+<span style="color: #ffb86c;">set</span> header_cache     = <span style="color: #f1fa8c;">"~/.mutt/cache/headers"</span>
+<span style="color: #ffb86c;">set</span> message_cachedir = <span style="color: #f1fa8c;">"~/.mutt/cache/bodies"</span>
+<span style="color: #ffb86c;">set</span> mailcap_path     = <span style="color: #f1fa8c;">"~/.mutt/mailcap"</span>
 
-<span style="color: #605E91;">## </span><span style="color: #605E91;">FOLDERS</span>
-<span style="color: #f3deea; font-weight: bold;">set</span> spoolfile = <span style="color: #996E7A;">"+INBOX"</span>
-<span style="color: #f3deea; font-weight: bold;">set</span> postponed = <span style="color: #996E7A;">"+[Gmail]/Drafts"</span>
-<span style="color: #f3deea; font-weight: bold;">set</span> trash     = <span style="color: #996E7A;">"+[Gmail]/Trash"</span>
+<span style="color: #6272a4;">## </span><span style="color: #6272a4;">FOLDERS</span>
+<span style="color: #ffb86c;">set</span> spoolfile = <span style="color: #f1fa8c;">"+INBOX"</span>
+<span style="color: #ffb86c;">set</span> postponed = <span style="color: #f1fa8c;">"+[Gmail]/Drafts"</span>
+<span style="color: #ffb86c;">set</span> trash     = <span style="color: #f1fa8c;">"+[Gmail]/Trash"</span>
 
-<span style="color: #605E91;">## </span><span style="color: #605E91;">UI</span>
+<span style="color: #6272a4;">## </span><span style="color: #6272a4;">UI</span>
 alternative_order text/plain text/html
 auto_view text/html
 
-<span style="color: #f3deea; font-weight: bold;">set</span> sort = reverse-date-received
+<span style="color: #ffb86c;">set</span> sort = reverse-date-received
 </pre>
 </div>
 

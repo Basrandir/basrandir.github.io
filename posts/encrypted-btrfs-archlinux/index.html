@@ -8,6 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>How-To: Encrypted Btrfs install on Arch Linux</title>
 <meta name="generator" content="Org mode" />
+<meta name="author" content="Bassam Saeed" />
 <link rel="stylesheet" type="text/css" href="/css/main.css">
 <link rel="alternate" type="application/rss+xml" href="/posts.rss">
 <link rel="alternate" type="application/atom+xml" href="/posts.atom">
@@ -44,18 +45,18 @@ partitions.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org2b7f276">Partitioning</a></li>
-<li><a href="#org4ff1237">Encyption</a></li>
-<li><a href="#org3a777cb">Setting up Btrfs and installing Arch Linux</a></li>
-<li><a href="#org3cec7f4">Post Installation</a></li>
-<li><a href="#orgd686a27">Snapshots</a></li>
+<li><a href="#orgd4add9b">Partitioning</a></li>
+<li><a href="#orgec9eb81">Encyption</a></li>
+<li><a href="#orgd61676d">Setting up Btrfs and installing Arch Linux</a></li>
+<li><a href="#org0d7d5a7">Post Installation</a></li>
+<li><a href="#orgdcf8744">Snapshots</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org2b7f276" class="outline-2">
-<h2 id="org2b7f276">Partitioning</h2>
-<div class="outline-text-2" id="text-org2b7f276">
+<div id="outline-container-orgd4add9b" class="outline-2">
+<h2 id="orgd4add9b">Partitioning</h2>
+<div class="outline-text-2" id="text-orgd4add9b">
 <p>
 To begin with decide how exactly the install will be set up. If UEFI
 boot isn’t needed then there is no need for a separate EFI System
@@ -115,9 +116,9 @@ And activate swap:
 </div>
 </div>
 
-<div id="outline-container-org4ff1237" class="outline-2">
-<h2 id="org4ff1237">Encyption</h2>
-<div class="outline-text-2" id="text-org4ff1237">
+<div id="outline-container-orgec9eb81" class="outline-2">
+<h2 id="orgec9eb81">Encyption</h2>
+<div class="outline-text-2" id="text-orgec9eb81">
 <p>
 The first thing that needs to be done is to create a LUKS encrypted
 container in the final partition using dm-crypt.
@@ -153,7 +154,7 @@ Create the btrfs filesystem:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">mkfs.btrfs -L <span style="color: #996E7A;">"arch"</span> /dev/mapper/btrfsroot
+<pre class="src src-bash">mkfs.btrfs -L <span style="color: #f1fa8c;">"arch"</span> /dev/mapper/btrfsroot
 </pre>
 </div>
 
@@ -178,9 +179,9 @@ article but is possible if needed. See <a href="https://wiki.archlinux.org/index
 </div>
 </div>
 
-<div id="outline-container-org3a777cb" class="outline-2">
-<h2 id="org3a777cb">Setting up Btrfs and installing Arch Linux</h2>
-<div class="outline-text-2" id="text-org3a777cb">
+<div id="outline-container-orgd61676d" class="outline-2">
+<h2 id="orgd61676d">Setting up Btrfs and installing Arch Linux</h2>
+<div class="outline-text-2" id="text-orgd61676d">
 <p>
 Properly create and mount the subvolumes for the actual Arch Linux
 install.
@@ -192,7 +193,7 @@ First mount the container:
 
 <div class="org-src-container">
 <pre class="src src-bash">mount /dev/mapper/btrfsroot /mnt
-<span style="color: #f3deea; font-weight: bold;">cd</span> /mnt
+<span style="color: #ffb86c;">cd</span> /mnt
 </pre>
 </div>
 
@@ -234,7 +235,7 @@ Unmount the LUKS container:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash"><span style="color: #f3deea; font-weight: bold;">cd</span>
+<pre class="src src-bash"><span style="color: #ffb86c;">cd</span>
 umount -R /mnt
 </pre>
 </div>
@@ -245,10 +246,10 @@ directories.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">mount -o <span style="color: #996E7A;">subvol</span>=__arch/root /dev/mapper/btrfsroot /mnt
+<pre class="src src-bash">mount -o <span style="color: #f8f8f2; font-weight: bold;">subvol</span>=__arch/root /dev/mapper/btrfsroot /mnt
 mkdir /mnt/{home,.snapshots}
-mount -o <span style="color: #996E7A;">subvol</span>=__arch/home /dev/mapper/btrfsroot /mnt/home
-mount -o <span style="color: #996E7A;">subvol</span>=__snapshots /dev/mapper/btrfsroot /mnt/.snapshots
+mount -o <span style="color: #f8f8f2; font-weight: bold;">subvol</span>=__arch/home /dev/mapper/btrfsroot /mnt/home
+mount -o <span style="color: #f8f8f2; font-weight: bold;">subvol</span>=__snapshots /dev/mapper/btrfsroot /mnt/.snapshots
 </pre>
 </div>
 
@@ -283,9 +284,9 @@ install.
 </div>
 </div>
 
-<div id="outline-container-org3cec7f4" class="outline-2">
-<h2 id="org3cec7f4">Post Installation</h2>
-<div class="outline-text-2" id="text-org3cec7f4">
+<div id="outline-container-org0d7d5a7" class="outline-2">
+<h2 id="org0d7d5a7">Post Installation</h2>
+<div class="outline-text-2" id="text-org0d7d5a7">
 <p>
 Generate the fstab file:
 </p>
@@ -301,9 +302,9 @@ file. The subvolume mounting should look something like this:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash"><span style="color: #996E7A;">LABEL</span>=arch  /           btrfs   rw,relatime,space_cache,<span style="color: #996E7A;">subvol</span>=__arch/root  0   0
-<span style="color: #996E7A;">LABEL</span>=arch  /home       btrfs   rw,relatime,space_cache,<span style="color: #996E7A;">subvol</span>=__arch/home  0   0
-<span style="color: #996E7A;">LABEL</span>=arch  /.snapshots btrfs   rw,relatime,space_cache,<span style="color: #996E7A;">subvol</span>=__snapshots  0   0
+<pre class="src src-bash"><span style="color: #f8f8f2; font-weight: bold;">LABEL</span>=arch  /           btrfs   rw,relatime,space_cache,<span style="color: #f8f8f2; font-weight: bold;">subvol</span>=__arch/root  0   0
+<span style="color: #f8f8f2; font-weight: bold;">LABEL</span>=arch  /home       btrfs   rw,relatime,space_cache,<span style="color: #f8f8f2; font-weight: bold;">subvol</span>=__arch/home  0   0
+<span style="color: #f8f8f2; font-weight: bold;">LABEL</span>=arch  /.snapshots btrfs   rw,relatime,space_cache,<span style="color: #f8f8f2; font-weight: bold;">subvol</span>=__snapshots  0   0
 </pre>
 </div>
 
@@ -333,7 +334,7 @@ the filesystems hook:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash"><span style="color: #996E7A;">HOOKS</span>=<span style="color: #996E7A;">"... encrypt ... filesystems ..."</span>
+<pre class="src src-bash"><span style="color: #f8f8f2; font-weight: bold;">HOOKS</span>=<span style="color: #f1fa8c;">"... encrypt ... filesystems ..."</span>
 </pre>
 </div>
 
@@ -369,7 +370,7 @@ LUKS container (<code>/dev/mapper/btrfsroot</code>).
 <pre class="src src-bash">title   Arch Linux
 linux   /vmlinuz-linux
 initrd  /initramfs-linux.img
-options <span style="color: #996E7A;">cryptdevice</span>=<span style="color: #996E7A;">UUID</span>=&lt;/dev/sda3 UUID&gt;:btrfsroot <span style="color: #996E7A;">root</span>=<span style="color: #996E7A;">UUID</span>=&lt;/dev/mapper/btrfsroot UUID&gt; <span style="color: #996E7A;">rootflags</span>=<span style="color: #996E7A;">subvol</span>=__arch/root rw quiet
+options <span style="color: #f8f8f2; font-weight: bold;">cryptdevice</span>=<span style="color: #f8f8f2; font-weight: bold;">UUID</span>=&lt;/dev/sda3 UUID&gt;:btrfsroot <span style="color: #f8f8f2; font-weight: bold;">root</span>=<span style="color: #f8f8f2; font-weight: bold;">UUID</span>=&lt;/dev/mapper/btrfsroot UUID&gt; <span style="color: #f8f8f2; font-weight: bold;">rootflags</span>=<span style="color: #f8f8f2; font-weight: bold;">subvol</span>=__arch/root rw quiet
 </pre>
 </div>
 
@@ -381,9 +382,9 @@ when creating the encrypted LUKS container.
 </div>
 </div>
 
-<div id="outline-container-orgd686a27" class="outline-2">
-<h2 id="orgd686a27">Snapshots</h2>
-<div class="outline-text-2" id="text-orgd686a27">
+<div id="outline-container-orgdcf8744" class="outline-2">
+<h2 id="orgdcf8744">Snapshots</h2>
+<div class="outline-text-2" id="text-orgdcf8744">
 <p>
 Snapshots are straightforward in Btrfs. They act as another subvolume
 linked to the original. They take up almost no space unless changes
@@ -397,7 +398,7 @@ To create a snapshot the subvolume must be mounted.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">btrfs subvolume snapshot /home /.snapshots/home-$(<span style="color: #996E7A;">date</span> <span style="color: #996E7A;">"+%F"</span>)
+<pre class="src src-bash">btrfs subvolume snapshot /home /.snapshots/home-$(date <span style="color: #f1fa8c;">"+%F"</span>)
 </pre>
 </div>
 
@@ -414,7 +415,7 @@ mounted them the same way.
 <div class="org-src-container">
 <pre class="src src-bash">btrfs subvolume list /
 btrfs subvolume delete /.snapshots/home-2016-01-25
-mount -o <span style="color: #996E7A;">subvol</span>=__snapshots/home-2016-01-25 /dev/mapper/btrfsroot /mnt/home-snapshots
+mount -o <span style="color: #f8f8f2; font-weight: bold;">subvol</span>=__snapshots/home-2016-01-25 /dev/mapper/btrfsroot /mnt/home-snapshots
 </pre>
 </div>
 
@@ -437,7 +438,7 @@ snapshot.
 <div class="org-src-container">
 <pre class="src src-bash">mkdir /mnt/btrfs-toplevel
 mount /dev/mapper/btrfsroot /mnt/btrfs-toplevel
-<span style="color: #f3deea; font-weight: bold;">cd</span> /mnt/btrfs-toplevel
+<span style="color: #ffb86c;">cd</span> /mnt/btrfs-toplevel
 mv __arch/home __arch/home-old
 mv __snapshots/home-2016-01-25 __arch/home
 </pre>

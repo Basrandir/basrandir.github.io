@@ -8,6 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Setting up LXC with Networking</title>
 <meta name="generator" content="Org mode" />
+<meta name="author" content="Bassam Saeed" />
 <link rel="stylesheet" type="text/css" href="/css/main.css">
 <link rel="alternate" type="application/rss+xml" href="/posts.rss">
 <link rel="alternate" type="application/atom+xml" href="/posts.atom">
@@ -47,7 +48,7 @@ First create the virtual link and bring it up.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">ip link add name {bridge_name} <span style="color: #f3deea; font-weight: bold;">type</span> bridge
+<pre class="src src-bash">ip link add name {bridge_name} <span style="color: #ffb86c;">type</span> bridge
 ip link set {bridge_name} up
 </pre>
 </div>
@@ -99,7 +100,7 @@ Edit the config file of the container. This is usually located at
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash"><span style="color: #605E91;">## </span><span style="color: #605E91;">network</span>
+<pre class="src src-bash"><span style="color: #6272a4;">## </span><span style="color: #6272a4;">network</span>
 lxc.network.type = veth
 lxc.network.link = {bridge_name}
 </pre>
