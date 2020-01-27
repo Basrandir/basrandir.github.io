@@ -1,15 +1,13 @@
 @font-face {
     font-family: 'Iosevka';
-    src: local('Iosevka'),
-	 local('Iosevka-Regular'),
+    src: local('Iosevka-Regular'),
 	 local('Iosevka Regular'),
 	 url(/fonts/Iosevka.woff2) format('woff2');
 }
 
 @font-face {
     font-family: 'B612';
-    src: local('B612'),
-	 local('B612 Regular'),
+    src: local('B612 Regular'),
 	 local('B612-Regular'),
 	 url(/fonts/B612.woff2) format('woff2');
 }
