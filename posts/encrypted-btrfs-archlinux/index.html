@@ -3,12 +3,11 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-01-25 Mon 00:00 -->
+<!-- 2020-06-24 Wed 20:48 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>How-To: Encrypted Btrfs install on Arch Linux</title>
 <meta name="generator" content="Org mode" />
-<meta name="author" content="Bassam Saeed" />
 <link rel="stylesheet" type="text/css" href="/css/main.css">
 <link rel="alternate" type="application/rss+xml" href="/posts.rss">
 <link rel="alternate" type="application/atom+xml" href="/posts.atom">
@@ -21,6 +20,7 @@
     <ul>
       <li><a href="/posts"><span>Posts</span></a></li>
       <li><a href="/books"><span>Books</span></a></li>
+      <li><a href="/feeds"><span>Feeds</span></a></li>
     </ul>
   </nav>
 </header>
@@ -45,18 +45,18 @@ partitions.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgd4add9b">Partitioning</a></li>
-<li><a href="#orgec9eb81">Encyption</a></li>
-<li><a href="#orgd61676d">Setting up Btrfs and installing Arch Linux</a></li>
-<li><a href="#org0d7d5a7">Post Installation</a></li>
-<li><a href="#orgdcf8744">Snapshots</a></li>
+<li><a href="#org0d047c3">Partitioning</a></li>
+<li><a href="#orga265344">Encyption</a></li>
+<li><a href="#orgbc877c9">Setting up Btrfs and installing Arch Linux</a></li>
+<li><a href="#org73560a8">Post Installation</a></li>
+<li><a href="#org21da542">Snapshots</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgd4add9b" class="outline-2">
-<h2 id="orgd4add9b">Partitioning</h2>
-<div class="outline-text-2" id="text-orgd4add9b">
+<div id="outline-container-org0d047c3" class="outline-2">
+<h2 id="org0d047c3">Partitioning</h2>
+<div class="outline-text-2" id="text-org0d047c3">
 <p>
 To begin with decide how exactly the install will be set up. If UEFI
 boot isn’t needed then there is no need for a separate EFI System
@@ -116,9 +116,9 @@ And activate swap:
 </div>
 </div>
 
-<div id="outline-container-orgec9eb81" class="outline-2">
-<h2 id="orgec9eb81">Encyption</h2>
-<div class="outline-text-2" id="text-orgec9eb81">
+<div id="outline-container-orga265344" class="outline-2">
+<h2 id="orga265344">Encyption</h2>
+<div class="outline-text-2" id="text-orga265344">
 <p>
 The first thing that needs to be done is to create a LUKS encrypted
 container in the final partition using dm-crypt.
@@ -179,9 +179,9 @@ article but is possible if needed. See <a href="https://wiki.archlinux.org/index
 </div>
 </div>
 
-<div id="outline-container-orgd61676d" class="outline-2">
-<h2 id="orgd61676d">Setting up Btrfs and installing Arch Linux</h2>
-<div class="outline-text-2" id="text-orgd61676d">
+<div id="outline-container-orgbc877c9" class="outline-2">
+<h2 id="orgbc877c9">Setting up Btrfs and installing Arch Linux</h2>
+<div class="outline-text-2" id="text-orgbc877c9">
 <p>
 Properly create and mount the subvolumes for the actual Arch Linux
 install.
@@ -284,9 +284,9 @@ install.
 </div>
 </div>
 
-<div id="outline-container-org0d7d5a7" class="outline-2">
-<h2 id="org0d7d5a7">Post Installation</h2>
-<div class="outline-text-2" id="text-org0d7d5a7">
+<div id="outline-container-org73560a8" class="outline-2">
+<h2 id="org73560a8">Post Installation</h2>
+<div class="outline-text-2" id="text-org73560a8">
 <p>
 Generate the fstab file:
 </p>
@@ -382,9 +382,9 @@ when creating the encrypted LUKS container.
 </div>
 </div>
 
-<div id="outline-container-orgdcf8744" class="outline-2">
-<h2 id="orgdcf8744">Snapshots</h2>
-<div class="outline-text-2" id="text-orgdcf8744">
+<div id="outline-container-org21da542" class="outline-2">
+<h2 id="org21da542">Snapshots</h2>
+<div class="outline-text-2" id="text-org21da542">
 <p>
 Snapshots are straightforward in Btrfs. They act as another subvolume
 linked to the original. They take up almost no space unless changes
@@ -398,7 +398,7 @@ To create a snapshot the subvolume must be mounted.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-bash">btrfs subvolume snapshot /home /.snapshots/home-$(date <span style="color: #f1fa8c;">"+%F"</span>)
+<pre class="src src-bash">btrfs subvolume snapshot /home /.snapshots/home-$(<span style="color: #fa8072;">date</span> <span style="color: #f1fa8c;">"+%F"</span>)
 </pre>
 </div>
 
