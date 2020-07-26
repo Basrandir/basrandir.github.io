@@ -24,6 +24,13 @@ html, body{
     margin: 0;
 }
 
+/* Set maximum line size to about 80 char */
+div {
+    max-width: 100ch;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 /* Heading styles */
 h1, h2, h3, h4, h5, h6{
     color: rgb(224, 44, 109);
