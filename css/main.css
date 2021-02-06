@@ -35,6 +35,7 @@ div {
 h1, h2, h3, h4, h5, h6{
     color: rgb(224, 44, 109);
     font-family: 'B612', sans-serif;
+    position: relative;
 }
 
 /* Scaled font sizes */
@@ -44,6 +45,15 @@ h3{font-size: 1.4em;}
 h3{font-size: 1.3em;}
 h4{font-size: 1.3em;}
 h5{font-size: 1.3em;}
+
+h2:before {
+    color: rgb(251, 184, 41);
+    content: "#";
+    font-style: oblique;
+    font-weight: bold;
+    left: -2rem;
+    position: absolute;
+}
 
 h1 > .subtitle{
     font-size: 0.7em;
