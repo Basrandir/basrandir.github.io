@@ -4,7 +4,282 @@
 <link href="https://www.bassamsaeed.ca"/>
 <link href="https://www.bassamsaeed.ca/posts.atom" rel="self"/>
 <id>https://www.bassamsaeed.ca/posts.atom</id>
-<updated>2020-01-19T12:21:43-05:00</updated>
+<updated>2021-07-18T12:21:43-05:00</updated>
+<entry>
+  <title>Python Development in Emacs with Direnv</title>
+  <author><name>Bassam Saeed</name><email>bassam.saeed@gmail.com</email></author>
+  <summary>Jul 18, 2021</summary>
+  <content type="html"><![CDATA[<div id="content">
+ <h1 class="title">Python Development in Emacs with Direnv
+ <br></br> <span class="subtitle">Jul 18, 2021</span>
+</h1>
+
+ <div id="outline-container-org1a99716" class="outline-2">
+ <h2 id="org1a99716">Introduction</h2>
+ <div class="outline-text-2" id="text-org1a99716">
+ <p>
+The Python tooling, especially when it comes to package management,
+can be incredibly annoying to deal with. It's been one of my primary
+gripes with Python development for years. Recently I have been
+working on a relatively major Python project in my spare time and
+have really tried to setup a proper working environment for myself.
+</p>
+
+ <div id="table-of-contents">
+ <h2>Table of Contents</h2>
+ <div id="text-table-of-contents">
+ <ul> <li> <a href="#org1a99716">Introduction</a></li>
+ <li> <a href="#orgbc96ae3">Managing Multiple Pythons</a></li>
+ <li> <a href="#orgafd47b5">Managing Python Virtual Environments</a></li>
+ <li> <a href="#org612be4e">Using direnv</a></li>
+ <li> <a href="#orge3edd2f">Integrating with Emacs</a>
+ <ul> <li> <a href="#org10ba56a">envrc</a></li>
+ <li> <a href="#org4cff26d">Language Server Protocol (LSP)</a></li>
+ <li> <a href="#org591cd3e">Extras</a></li>
+</ul></li>
+ <li> <a href="#org60a21f0">Conclusion</a></li>
+</ul></div>
+</div>
+</div>
+</div>
+
+ <div id="outline-container-orgbc96ae3" class="outline-2">
+ <h2 id="orgbc96ae3">Managing Multiple Pythons</h2>
+ <div class="outline-text-2" id="text-orgbc96ae3">
+ <p>
+Often times you don't want to be on the latest Python
+available. There's a variety of reasons for this but usually the
+main one is due to package requirements. There are different ways to
+manage multiple Python versions. The  <code>AUR</code> contains a few older
+versions of python. Or if you prefer, Nix and Guix can be pinned to
+a commit containing a specific Python version. But perhaps the
+easiest method is to use  <a href="https://github.com/pyenv/pyenv">pyenv</a>.
+</p>
+
+ <p>
+In addition to being able to install various versions of Python,
+ <code>pyenv</code> has shims that allow your shell to determine which version to
+use depending on which project you're in. This is a perfectly
+acceptable way of doing it but I only use  <code>pyenv</code> to install different
+versions. For actually choosing which version of Python to use based
+on which project I'm in I use  <code>direnv</code> which I will cover a little
+later.
+</p>
+</div>
+</div>
+
+ <div id="outline-container-orgafd47b5" class="outline-2">
+ <h2 id="orgafd47b5">Managing Python Virtual Environments</h2>
+ <div class="outline-text-2" id="text-orgafd47b5">
+ <p>
+Modern Python (3.3+) has a built-in way of creating virtual
+envrionments. For older Pythons you'll need to use  <a href="https://virtualenv.pypa.io/en/latest/">Virtualenv</a>. In
+addition there are tools that look to improve the workflow
+surrounding virtual environment development in Python such as  <a href="https://pipenv.pypa.io/en/latest/">Pipenv</a>
+and  <a href="https://python-poetry.org/">Poetry</a>. And as always you can leverage the power of Nix or Guix
+to bypass using Python-specific virtual environments entirely. My
+personal preference these days is using  <code>Poetry</code>.
+</p>
+</div>
+</div>
+
+ <div id="outline-container-org612be4e" class="outline-2">
+ <h2 id="org612be4e">Using direnv</h2>
+ <div class="outline-text-2" id="text-org612be4e">
+ <p>
+ <a href="https://direnv.net/">direnv</a> is a phenomenal tool that I have been aware of for a while
+but never actually used until recently. Basically it can
+automatically enable/disable environment variables depending on the
+current directory (and subdirectories). This allows you to very
+quickly have your environment set up per project just by ~cd~ing
+into a directory.
+</p>
+
+ <p>
+This is why I'm not using the  <code>pyenv</code> shim,  <code>direnv</code> handles that for me
+so it's 1 less command and setup to worry about and in addition
+ <code>direnv</code> is language-agnostic. I can use it for almost anything.
+</p>
+
+ <p>
+There is a global configuration file for  <code>direnv</code> where we'll define
+how we want it to interface with our virtual environment. This
+example is designed for using with  <code>poetry</code>, but it's fairly
+straightforward to use with other setups. In fact there is an
+extensive  <a href="https://github.com/direnv/direnv/wiki/Python">Community Wiki</a> that covers almost every setup you could
+want. And creating your own is relatively simple once you understand
+how it works. Modern  <code>direnv</code> supports  <code>pyenv</code> out of the box so we
+don't even need to set anything up for that.
+</p>
+
+ <p>
+In  <code>$XDG_CONFIG_HOME/direnv/direnvrc</code> add the following code:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash"> <span style="color: #FBB829;">layout_poetry</span>() {
+   <span style="color: #EF2F27;">if</span> [[  <span style="color: #FF5C8F;">!</span> -f pyproject.toml ]];  <span style="color: #EF2F27;">then</span>
+    log_error  <span style="color: #98BC37;">'No pyproject.toml found. Use `poetry new` or `poetry init` to create one first.'</span>
+     <span style="color: #EF2F27;">exit</span> 2
+   <span style="color: #EF2F27;">fi</span>
+
+   <span style="color: #918175; font-style: italic;"># </span> <span style="color: #918175; font-style: italic;">create venv if it doesn't exist</span>
+  poetry run true
+
+   <span style="color: #2C78BF;">export</span>  <span style="color: #0AAEB3;">VIRTUAL_ENV</span>=$( <span style="color: #FF5F00;">poetry env info --path</span>)
+   <span style="color: #2C78BF;">export</span>  <span style="color: #0AAEB3;">POETRY_ACTIVE</span>=1
+  PATH_add  <span style="color: #98BC37;">"$VIRTUAL_ENV/bin"</span>
+}
+</pre>
+</div>
+
+ <p>
+This is taken straight from the Community Wiki and since it's a
+basic bash function, it should be easy enough to follow. Essentially
+we first confirm that this is  <code>poetry</code> based project after which we
+set the appropriate environment variables and add the location of
+the virtual environment that  <code>poetry</code> created in our  <b>PATH</b>.
+</p>
+
+ <p>
+Now that  <code>direnv</code> knows how to interface properly with  <code>poetry</code> we can
+set up our individual projects. Go to the root directory of a  <code>poetry</code>
+based project and create a file called  <code>.envrc</code>. In this file add the
+following 2 lines:
+</p>
+
+ <div class="org-src-container">
+ <pre class="src src-bash">layout pyenv 3.9.6
+layout poetry
+</pre>
+</div>
+
+ <p>
+The first line uses the built-in  <code>pyenv</code> integration to set Python
+3.9.6 as the version of Python for our project. Make sure you had
+previously installed that version using  <code>pyenv install 3.9.6</code>.
+</p>
+
+ <p>
+The second line utilizes the custom function we defined earlier to
+setup our environment to use the virtual environment that  <code>poetry</code> is
+managing.
+</p>
+
+ <p>
+That's it. Two simple files that make life so easy.
+</p>
+</div>
+</div>
+
+ <div id="outline-container-orge3edd2f" class="outline-2">
+ <h2 id="orge3edd2f">Integrating with Emacs</h2>
+ <div class="outline-text-2" id="text-orge3edd2f">
+ <p>
+Of course it's all well and good that our shell fully understands
+how our Python project is laid out. The next step is to have our
+editor understand it as well. This is a big part of why I went with
+ <code>direnv</code>. There is really good integration with Emacs. There are Emacs
+extensions for interacting with  <code>poetry</code> and  <code>pyenv</code> but that's already
+2 more extensions, not to mention I would need to find other well
+working extensions for other languages and ecosystems if I wasn't
+relying on  <code>direnv</code>.
+</p>
+</div>
+
+ <div id="outline-container-org10ba56a" class="outline-3">
+ <h3 id="org10ba56a">envrc</h3>
+ <div class="outline-text-3" id="text-org10ba56a">
+ <p>
+There are 2 Emacs extensions I know of for  <code>direnv</code>. There's  <a href="https://github.com/wbolster/emacs-direnv">direnv.el</a>
+and  <a href="https://github.com/wbolster/emacs-direnv">envrc</a>. Both are good and well-supported, but  <code>envrc</code> sets
+environment variables buffer-locally which I prefer. It's really
+just a conceptual difference. I would recommend reading the
+documentation for whichever package you go with. For  <code>envrc</code> the only
+real configuration after installing it is to enable
+ <code>(envrc-global-mode)</code> which will the set the Emacs environment to
+match the  <code>direnv</code> one for the current file. It's recommend to enable
+that mode as late as possible so that it's mode is prepended to
+various hooks and as such is enabled first before other important
+hooks that look at the Emacs environment.
+</p>
+</div>
+</div>
+
+ <div id="outline-container-org4cff26d" class="outline-3">
+ <h3 id="org4cff26d">Language Server Protocol (LSP)</h3>
+ <div class="outline-text-3" id="text-org4cff26d">
+ <p>
+Now to truly leverage this environment I would recommend using a
+Python language server coupled with an lsp client for Emacs.
+</p>
+
+ <p>
+By virtue of being such a popular language, there are quite a few
+Python language servers available. As far as I'm aware there are 3
+that are actively developed. Personally I'm using  <a href="https://github.com/microsoft/pyright">Pyright</a> which is
+the open source core of Microsoft's Python language server called
+ <code>Pylance</code>. In my experience  <code>Pyright</code> works best out of the available
+Python language servers and  <code>Pylance</code> itself is the default in VSCode
+anyway.
+</p>
+
+ <p>
+In terms of the lsp client, like all for all things Emacs, there
+are competing solutions.  <a href="https://github.com/emacs-lsp/lsp-mode">lsp-mode</a> and  <a href="https://github.com/joaotavora/eglot">Eglot</a>. Both are quite good
+and well maintained and I've used both in the past to great
+success. These days I'm using  <code>lsp-mode</code> so that's what I'll
+discuss. There's actually pretty nice documentation on their
+website for setting up both  <code>lsp-mode</code> and using it with
+ <code>pyright</code>. Essentially the basic  <code>lsp-mode</code> package is easily installed
+after which you would also have to install and  <code>require</code>  <a href="https://github.com/emacs-lsp/lsp-pyright/">lsp-pyright</a>.
+</p>
+
+ <p>
+One thing to note is that you want  <code>lsp-mode</code> to activate  <i>after</i>  <code>envrc</code>
+has finished setting up the Emacs environment. So you should add
+the hook for  <code>lsp-pyright</code>  <i>before</i> you add the  <code>(envrc-global-mode)</code>
+config line.
+</p>
+</div>
+</div>
+
+ <div id="outline-container-org591cd3e" class="outline-3">
+ <h3 id="org591cd3e">Extras</h3>
+ <div class="outline-text-3" id="text-org591cd3e">
+ <p>
+At this point you can setup nice additional features to mimic a
+more IDE-like development setup. The following is a non-exhaustive
+list:
+</p>
+
+ <ul class="org-ul"> <li>Company-mode</li>
+ <li>Flymake/Flycheck</li>
+ <li>YASnippets</li>
+ <li>Magit</li>
+</ul></div>
+</div>
+</div>
+
+ <div id="outline-container-org60a21f0" class="outline-2">
+ <h2 id="org60a21f0">Conclusion</h2>
+ <div class="outline-text-2" id="text-org60a21f0">
+ <p>
+So far I'm really loving this system. Not just for Python but the
+combination of  <code>direnv</code> and  <code>lsp</code> works beautifully with practically
+every programming language and environment without needing to
+install and configure a lot of very language-specific Emacs
+extensions. At most you'll just need to install the appropriate
+language server and then (sometimes) the specific lsp library for
+that language server like we did for  <code>pyright</code>.
+</p>
+</div>
+</div>
+</div>]]></content>
+  <link href="https://www.bassamsaeed.ca/posts/python-development-in-emacs/index.html"/>
+  <id>https://www.bassamsaeed.ca/posts/python-development-in-emacs/index.html</id>
+  <updated>2021-07-18T22:21:00-04:00</updated>
+</entry>
 <entry>
   <title>The Devil is in the Email, Mutt Guide Pt. 1</title>
   <author><name>Bassam Saeed</name><email>bassam.saeed@gmail.com</email></author>
