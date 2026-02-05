@@ -12,6 +12,34 @@
 	 url(/fonts/B612.woff2) format('woff2');
 }
 
+/* crimson-text-regular - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Crimson Text';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/crimson-text-v19-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* crimson-text-italic - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Crimson Text';
+  font-style: italic;
+  font-weight: 400;
+  src: url('/fonts/crimson-text-v19-latin-italic.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+/* rosario-700 - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Rosario';
+  font-style: normal;
+  font-weight: 700;
+  src: url('/fonts/rosario-v35-latin-700.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+
 /* Selection color */
 ::selection {
     background-color: #028090;
@@ -34,7 +62,7 @@ div {
 /* Heading styles */
 h1, h2, h3, h4, h5, h6{
     color: rgb(224, 44, 109);
-    font-family: 'B612', sans-serif;
+    font-family: 'Rosario', sans-serif;
     position: relative;
 }
 
@@ -59,9 +87,14 @@ h1 > .subtitle{
     font-size: 0.7em;
 }
 
-/* Normal text style(including code) */
-p, pre, ol, ul, table{
+/* Normal text style */
+p, ol, ul, table{
     color: rgb(252, 232, 195);
+    font-size: 1.25em;
+    font-family: 'Crimson Text', serif;
+}
+
+pre{
     font-size: 1.25em;
     font-family: 'Iosevka', monospace;
 }
