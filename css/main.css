@@ -88,14 +88,13 @@ h1 > .subtitle{
 }
 
 /* Normal text style */
-p, ol, ul, table{
+body{
     color: rgb(252, 232, 195);
     font-size: 1.25em;
     font-family: 'Crimson Text', serif;
 }
 
 pre{
-    font-size: 1.25em;
     font-family: 'Iosevka', monospace;
 }
 
