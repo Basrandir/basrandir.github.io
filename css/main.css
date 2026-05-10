@@ -27,7 +27,7 @@
   font-family: 'Signika';
   font-weight: 700;
   font-display: swap;
-  src: url("./fonts/signika-latin-vf.woff2") format('woff2-variations');
+  src: url("/fonts/signika-latin-vf.woff2") format('woff2-variations');
 }
 
 /* Selection color */
